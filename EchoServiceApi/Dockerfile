@@ -12,12 +12,12 @@ RUN dotnet restore "EchoServiceApi/EchoServiceApi.csproj"
 FROM restore AS build
 COPY . .
 WORKDIR "/src/EchoServiceApi"
+ARG VERSION=1.0.0-dev
+ENV MinVerVersionOverride=$VERSION
 RUN dotnet build "EchoServiceApi.csproj" -c Release -o /app/build
 
 FROM build AS publish
-ARG VERSION=1.0.0-dev
-RUN export MinVerVersionOverride=$VERSION && \
-    dotnet publish "EchoServiceApi.csproj" -c Release -o /app/publish
+RUN dotnet publish "EchoServiceApi.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
