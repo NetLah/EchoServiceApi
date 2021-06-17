@@ -15,7 +15,7 @@ WORKDIR "/src/EchoServiceApi"
 RUN dotnet build "EchoServiceApi.csproj" -c Release -o /app/build
 
 FROM build AS publish
-ARG VERSION
+ARG VERSION=1.0.0-dev
 RUN export MinVerVersionOverride=$VERSION && \
     dotnet publish "EchoServiceApi.csproj" -c Release -o /app/publish
 
