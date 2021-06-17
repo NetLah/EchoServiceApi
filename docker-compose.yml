@@ -10,4 +10,6 @@ services:
       - "5000:80"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_FORWARDEDHEADERS_ENABLED=true
       - Serilog__MinimumLevel__Override__Serilog.AspNetCore.RequestLoggingMiddleware=Information
+      - Serilog__MinimumLevel__Override__Microsoft.AspNetCore.HttpOverrides.ForwardedHeadersMiddleware=Debug
