@@ -25,5 +25,5 @@ jobs:
         run: dotnet build --configuration Release --no-restore
       - name: Test
         run: dotnet test -c Release --no-build --verbosity normal
-      - name: Pack
-        run: dotnet public -c Release -o ./artifacts/echoServiceApi/ --no-build
+      - name: Publish
+        run: dotnet publish EchoServiceApi -c Release -o ./artifacts/echoServiceApi/ --no-build
