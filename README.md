@@ -71,7 +71,7 @@ https://<domain:port>/e/<what-ever-path-and-method>
 
 - This Echo Service Api support both IIS In process, IIS out process, IIS ARR Urlrewite or NGINX.
 
-- For forwarded headers issue when behind Reverse Proxy, can check this log for understanding: https://devblogs.microsoft.com/aspnet/forwarded-headers-middleware-updates-in-net-core-3-0-preview-6/
+- For forwarded headers issue when behind Reverse Proxy, can check this article for understanding: https://devblogs.microsoft.com/aspnet/forwarded-headers-middleware-updates-in-net-core-3-0-preview-6/
 
 - To add support Forwarded Headers when use with Reverse Proxy, make sure add this environment setting (environment setings, is it not support appsettings.json).
 
