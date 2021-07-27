@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageTags>NetLah;.NetCore;ASP.NETCore</PackageTags>
-    <Authors>NetLah</Authors>
+    <Authors>ThoHo; NetLah</Authors>
     <Company>NetLah</Company>
     <Copyright>NetLah</Copyright>
     <Product>NetLah .NET</Product>
@@ -15,7 +15,7 @@
     <PackageReleaseNotes>https://github.com/NetLah/EchoServiceApi/releases</PackageReleaseNotes>
 
     <!-- Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
-    <PublishRepositoryUrl>false</PublishRepositoryUrl>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
 
     <!-- Embed source files that are not tracked by the source control manager in the PDB -->
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
