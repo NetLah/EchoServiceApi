@@ -5,7 +5,9 @@ services:
     build:
       context: ..
       dockerfile: EchoServiceApi/Dockerfile
-    image: netlah/echo-service-api:linux-5.0.8
+      args:
+        VERSION: 1.0.1-dev
+    image: netlah/echo-service-api:linux-5.0.9
     ports:
       - "5000:80"
     environment:
