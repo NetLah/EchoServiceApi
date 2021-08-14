@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.8" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
     <PackageReference Include="NetLah.Abstractions" />
     <PackageReference Include="NetLah.Extensions.Configuration" />
     <PackageReference Include="NetLah.Extensions.Logging.Serilog" />
