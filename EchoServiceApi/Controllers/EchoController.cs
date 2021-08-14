@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 
 namespace EchoServiceApi.Controllers
@@ -12,13 +11,6 @@ namespace EchoServiceApi.Controllers
     [ApiController]
     public class EchoController : ControllerBase
     {
-        private readonly ILogger _logger;
-
-        public EchoController(ILogger<EchoController> logger)
-        {
-            _logger = logger;
-        }
-
         [Route("400")]
         public IActionResult OnError400() => CodeAndMessage(400, "Test bad request");
 
