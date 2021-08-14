@@ -1,6 +1,6 @@
 # ASPNET.Core 5 Echo Service WebApi
 
-ASPNET.Core 5 WebApi provide Echo Service Api for testing deployment and integration environment. This is useful on detect deployment (setup environment) and development issue OAuth and OIDC with deployment environment.
+ASPNET.Core 5 WebApi provide Echo Service Api for troubleshooting deployment and integration. This is useful tool on detecting deployment (setup environment) and development issue OAuth and OIDC with deployment environment.
 
 ## Build Status
 
@@ -19,7 +19,7 @@ ASPNET.Core 5 WebApi provide Echo Service Api for testing deployment and integra
 ```
 docker pull netlah/echo-service-api:linux
 docker run -d -p 5000:80 --name echoapi netlah/echo-service-api:linux
-docker logs- f echoapi
+docker logs -f echoapi
 docker rm -f echoapi
 ```
 
@@ -100,3 +100,35 @@ web.config
     </system.webServer>
 </configuration>
 ```
+
+## Troubleshooting configuration, appsettings, connection strings and environments
+
+### Setup connection strings with provider name and dump connection strings
+
+Setup Azure AppService connection strings use specified provider or custom
+
+![azure-appservice-configuration-connection-strings.png](https://raw.githubusercontent.com/NetLah/EchoServiceApi/main/docs/azure-appservice-configuration-connection-strings.png)
+
+Dump connection strings
+
+```
+https://echoapi-******.azurewebsites.net/dump/connectionStrings
+```
+
+![dump-connectionStrings.png](https://raw.githubusercontent.com/NetLah/EchoServiceApi/main/docs/dump-connectionStrings.png)
+
+### Dump appsettings
+
+```
+https://echoapi-******.azurewebsites.net/dump/appSettings?env=false
+```
+
+![dump-appsettings.png](https://raw.githubusercontent.com/NetLah/EchoServiceApi/main/docs/dump-appsettings.png)
+
+### Dump environments
+
+```
+https://echoapi-******.azurewebsites.net/dump/environments
+```
+
+![dump-environments.png](https://raw.githubusercontent.com/NetLah/EchoServiceApi/main/docs/dump-environments.png)
