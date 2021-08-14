@@ -1,7 +1,7 @@
 <Project>
 
   <PropertyGroup>
-    <FrameworkVersion>5.0.8</FrameworkVersion>
+    <FrameworkVersion>5.0.9</FrameworkVersion>
     <FrameworkBaselineVersion>5.0.0</FrameworkBaselineVersion>
   </PropertyGroup>
 
@@ -11,10 +11,10 @@
     <PackageReference Update="Microsoft.SourceLink.GitHub" Version="1.0.*" PrivateAssets="All" />
 
     <!--the netlah platform-->
-    <PackageReference Update="NetLah.Abstractions" Version="[0.1.1,1.0)" PrivateAssets="build" />
-    <PackageReference Update="NetLah.Extensions.Configuration" Version="[0.1.0,1.0)" />
-    <PackageReference Update="NetLah.Extensions.EventAggregator" Version="[0.1.0,1.0)" />
-    <PackageReference Update="NetLah.Extensions.Logging.Serilog" Version="[0.1.1,1.0)" />
+    <PackageReference Update="NetLah.Abstractions" Version="[0.*,1.0)" PrivateAssets="build" />
+    <PackageReference Update="NetLah.Extensions.Configuration" Version="[0.*,1.0)" />
+    <PackageReference Update="NetLah.Extensions.EventAggregator" Version="[0.*,1.0)" />
+    <PackageReference Update="NetLah.Extensions.Logging.Serilog" Version="[0.*,1.0)" />
     <PackageReference Update="Testing.Dynamic.Json" Version="1.*-*" />
 
     <!--tests-->
@@ -66,7 +66,7 @@
     <PackageReference Update="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Update="Microsoft.Extensions.CommandLineUtils" Version="1.*" />
     <PackageReference Update="Microsoft.VisualStudio.Threading" Version="16.*" />
-    <PackageReference Update="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.*" />
+    <PackageReference Update="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.11.*" />
     <PackageReference Update="System.Memory" Version="4.5.4" />
     <PackageReference Update="System.Runtime.Loader" Version="4.3.0" />
     <PackageReference Update="System.Runtime.Extensions" Version="4.3.1" />
