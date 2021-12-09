@@ -15,6 +15,7 @@
     <PackageReference Update="NetLah.Extensions.Configuration" Version="[0.*,1.0)" />
     <PackageReference Update="NetLah.Extensions.EventAggregator" Version="[0.*,1.0)" />
     <PackageReference Update="NetLah.Extensions.Logging.Serilog" Version="[0.*,1.0)" />
+    <PackageReference Update="NetLah.Extensions.Logging.Serilog.AspNetCore" Version="[0.*,1.0)" />
     <PackageReference Update="Testing.Dynamic.Json" Version="1.*-*" />
 
     <!--tests-->

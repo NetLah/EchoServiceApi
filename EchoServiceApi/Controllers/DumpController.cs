@@ -41,11 +41,11 @@ namespace EchoServiceApi.Controllers
         }
 
         public JsonResult ConnectionStrings([FromServices] IConfiguration configuration) => new(
-            new ConnectionStringsHelper(configuration)
+            new ConnectionStringManager(configuration)
                 .ConnectionStrings
                 .ToDictionary(c => c.Key, c => new
                 {
-                    c.Value.ConnectionString,
+                    c.Value.Raw,
                     Provider = c.Value.Provider.ToString(),
                     c.Value.Custom,
                 }));
