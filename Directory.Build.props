@@ -1,8 +1,8 @@
 <Project>
 
   <PropertyGroup>
-    <PackageTags>NetLah;.NetCore;ASP.NETCore</PackageTags>
-    <Authors>ThoHo; NetLah</Authors>
+    <PackageTags>NetLah;.NetCore;ASP.NETCore;Deployment</PackageTags>
+    <Authors>ThoHo;NetLah</Authors>
     <Company>NetLah</Company>
     <Copyright>NetLah</Copyright>
     <Product>NetLah .NET</Product>
@@ -20,7 +20,9 @@
     <!-- Embed source files that are not tracked by the source control manager in the PDB -->
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
 
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>10.0</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TEAMCITY_VERSION)' != '' OR '$(CI)' == 'true' OR '$(TF_BUILD)' == 'true' OR '$(GITHUB_ACTIONS)' == 'true'">

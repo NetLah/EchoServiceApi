@@ -1,40 +1,67 @@
-﻿using System;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+﻿using NetLah.Diagnostics;
 using NetLah.Extensions.Logging;
 
-namespace EchoServiceApi
+AppLog.InitLogger();
+AppLog.Logger.LogInformation("Application configure...");
+try
 {
-#pragma warning disable S1118 // Utility classes should not have public constructors
-    public class Program
-#pragma warning restore S1118 // Utility classes should not have public constructors
+    var appInfo = ApplicationInfo.Initialize(null);
+    var builder = WebApplication.CreateBuilder(args);
+
+    builder.UseSerilog(logger => LogAppEvent(logger, "Application initializing...", appInfo));
+    var logger = AppLog.Logger;
+
+    // Add services to the container.
+
+    builder.Services.AddControllers();
+
+    builder.Services.AddHealthChecks();     // Registers health checks services
+
+    var app = builder.Build();
+
+    logger.LogInformation("Environment: {environmentName}; DeveloperMode:{isDevelopment}", app.Environment.EnvironmentName, app.Environment.IsDevelopment());
+
+#pragma warning disable S3923 // All branches in a conditional structure should not have exactly the same implementation
+    if (app.Environment.IsDevelopment())
+#pragma warning restore S3923 // All branches in a conditional structure should not have exactly the same implementation
     {
-        public static void Main(string[] args)
-        {
-            AppLog.InitLogger();
-            try
-            {
-                AppLog.Logger.LogInformation("Application configure...");
-
-                CreateHostBuilder(args).Build().Run();
-            }
-            catch (Exception ex)
-            {
-                AppLog.Logger.LogCritical(ex, "Host terminated unexpectedly");
-            }
-            finally
-            {
-                Serilog.Log.CloseAndFlush();
-            }
-        }
-
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .UseSerilog2(logger => logger.LogInformation("Application initializing..."))
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
+        // app.UseDeveloperExceptionPage()
     }
+    else
+    {
+        // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+        // app.UseHsts()
+    }
+
+    app.UseSerilogRequestLoggingLevel(LogLevel.Information);
+
+    app.UseHealthChecks("/healthz");
+
+    // app.UseHttpsRedirection()
+
+    app.UseStatusCodePages();
+
+    app.UseStaticFiles();
+
+    app.UseAuthorization();
+
+    app.MapControllers();
+
+    app.Lifetime.ApplicationStarted.Register(() => LogAppEvent(logger, "ApplicationStarted", appInfo));
+    app.Lifetime.ApplicationStopping.Register(() => LogAppEvent(logger, "ApplicationStopping", appInfo));
+    app.Lifetime.ApplicationStopped.Register(() => LogAppEvent(logger, "ApplicationStopped", appInfo));
+
+    app.Run();
+
+    static void LogAppEvent(ILogger logger, string appEvent, IAssemblyInfo appInfo)
+        => logger.LogInformation("{ApplicationEvent} App:{title}; Version:{version} BuildTime:{buildTime}; Framework:{framework}",
+        appEvent, appInfo.Title, appInfo.InformationalVersion, appInfo.BuildTimestampLocal, appInfo.FrameworkName);
+}
+catch (Exception ex)
+{
+    AppLog.Logger.LogCritical(ex, "Application terminated unexpectedly");
+}
+finally
+{
+    Serilog.Log.CloseAndFlush();
 }

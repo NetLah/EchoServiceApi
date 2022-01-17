@@ -1,7 +1,8 @@
-FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
+ARG ASPNET_IMAGE=mcr.microsoft.com/dotnet/aspnet:6.0
+FROM ${ASPNET_IMAGE} AS base
 WORKDIR /app
 
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS restore
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS restore
 WORKDIR /src
 COPY ["Directory.Build.props", "Directory.Build.targets", "./"]
 COPY ["EchoServiceApi/EchoServiceApi.csproj", "EchoServiceApi/"]
