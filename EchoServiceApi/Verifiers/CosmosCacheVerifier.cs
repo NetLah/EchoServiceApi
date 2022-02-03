@@ -1,5 +1,4 @@
-﻿using Azure.Identity;
-using Microsoft.Azure.Cosmos;
+﻿using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Caching.Cosmos;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
@@ -14,7 +13,7 @@ namespace EchoServiceApi.Verifiers
 
     public class CosmosCacheVerifier : BaseVerifier
     {
-        public CosmosCacheVerifier(IConfiguration configuration) : base(configuration) { }
+        public CosmosCacheVerifier(IServiceProvider serviceProvider) : base(serviceProvider) { }
 
         public async Task<VerifyResult> VerifyAsync(string name)
         {
@@ -29,7 +28,7 @@ namespace EchoServiceApi.Verifiers
 
             using var cosmosclient = !string.IsNullOrEmpty(accountKey) ?
                 new CosmosClient(accountEndpoint, accountKey, cosmosClientOptions) :
-                new CosmosClient(accountEndpoint, new DefaultAzureCredential(includeInteractiveCredentials: false), cosmosClientOptions);
+                new CosmosClient(accountEndpoint, TokenFactory.GetTokenCredential(), cosmosClientOptions);
 
             var cosmosCacheOptions = new CosmosCacheOptions
             {

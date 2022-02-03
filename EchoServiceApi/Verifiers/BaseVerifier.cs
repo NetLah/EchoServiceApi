@@ -4,12 +4,19 @@ namespace EchoServiceApi.Verifiers
 {
     public abstract class BaseVerifier
     {
-        protected BaseVerifier(IConfiguration configuration)
+        private IConfiguration? _configuration;
+        private TokenCredentialFactory? _tokenCredentialFactory;
+
+        protected BaseVerifier(IServiceProvider serviceProvider)
         {
-            Configuration = configuration;
+            ServiceProvider = serviceProvider;
         }
 
-        public IConfiguration Configuration { get; }
+        public IConfiguration Configuration => _configuration ??= ServiceProvider.GetRequiredService<IConfiguration>();
+
+        public TokenCredentialFactory TokenFactory => _tokenCredentialFactory ??= ServiceProvider.GetRequiredService<TokenCredentialFactory>();
+
+        public IServiceProvider ServiceProvider { get; }
 
         protected ProviderConnectionString GetConnection(string name)
         {

@@ -3,7 +3,7 @@ namespace EchoServiceApi.Verifiers
 {
     public class PosgreSqlVerifier : BaseVerifier
     {
-        public PosgreSqlVerifier(IConfiguration configuration) : base(configuration) { }
+        public PosgreSqlVerifier(IServiceProvider serviceProvider) : base(serviceProvider) { }
 
         public async Task<VerifyResult> VerifyAsync(string name, string tableName)
         {

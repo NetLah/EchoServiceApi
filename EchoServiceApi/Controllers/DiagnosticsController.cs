@@ -45,5 +45,18 @@ namespace EchoServiceApi.Controllers
                 return Ok(VerifyResult.Failed(ex));
             }
         }
+
+        public async Task<IActionResult> KeyVaultCertificate([FromServices] KeyVaultCertificateVerifier keyVaultCertificateVerifier, string name, bool privateKey)
+        {
+            try
+            {
+                var result = await keyVaultCertificateVerifier.VerifyAsync(name, privateKey);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return Ok(VerifyResult.Failed(ex));
+            }
+        }
     }
 }

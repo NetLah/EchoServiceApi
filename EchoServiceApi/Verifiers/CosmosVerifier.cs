@@ -15,7 +15,7 @@ namespace EchoServiceApi.Verifiers
 
     public class CosmosVerifier : BaseVerifier
     {
-        public CosmosVerifier(IConfiguration configuration) : base(configuration) { }
+        public CosmosVerifier(IServiceProvider serviceProvider) : base(serviceProvider) { }
 
         public async Task<VerifyResult> VerifyAsync(string name, string key)
         {
@@ -33,7 +33,7 @@ namespace EchoServiceApi.Verifiers
 
             using var cosmosclient = !string.IsNullOrEmpty(accountKey) ?
                 new CosmosClient(accountEndpoint, accountKey, cosmosClientOptions) :
-                new CosmosClient(accountEndpoint, new DefaultAzureCredential(includeInteractiveCredentials: false), cosmosClientOptions);
+                new CosmosClient(accountEndpoint, TokenFactory.GetTokenCredential(), cosmosClientOptions);
 
             var container = cosmosclient.GetContainer(databaseName, containerName);
             _ = await container.ReadContainerAsync().ConfigureAwait(false);

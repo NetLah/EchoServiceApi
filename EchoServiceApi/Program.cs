@@ -20,9 +20,12 @@ try
 
     builder.Services.AddHealthChecks();     // Registers health checks services
 
+    builder.Services.AddSingleton<TokenCredentialFactory>();
+
     builder.Services.AddScoped<CosmosCacheVerifier>();
     builder.Services.AddScoped<CosmosVerifier>();
     builder.Services.AddScoped<PosgreSqlVerifier>();
+    builder.Services.AddScoped<KeyVaultCertificateVerifier>();
 
     var app = builder.Build();
 
