@@ -32,7 +32,7 @@ namespace EchoServiceApi.Verifiers
                 {
                     var secretClient = new SecretClient(certificateIdentifier, tokenCredential);
                     var response = await secretClient.GetSecretAsync(certificateName, version);
-                    var keyVaultSecret = response.Value;
+                    KeyVaultSecret keyVaultSecret = response.Value;
                     var bytes = Convert.FromBase64String(keyVaultSecret.Value);
                     cert = new X509Certificate2(bytes, (string?)null, X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.EphemeralKeySet);
                     var previous = factory;

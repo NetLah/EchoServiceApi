@@ -143,6 +143,7 @@
     <PackageReference Update="Azure.Identity" Version="1.*" />
     <PackageReference Update="Azure.Messaging.ServiceBus" Version="7.*" />
     <PackageReference Update="Azure.Security.KeyVault.Certificates" Version="4.*" />
+    <PackageReference Update="Azure.Security.KeyVault.Keys" Version="4.*" />
     <PackageReference Update="Azure.Security.KeyVault.Secrets" Version="4.*" />
     <PackageReference Update="Azure.Storage.Blobs" Version="12.*" />
     <PackageReference Update="Microsoft.ApplicationInsights.AspNetCore" Version="2.*" />

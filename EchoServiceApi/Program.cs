@@ -26,6 +26,7 @@ try
     builder.Services.AddScoped<CosmosVerifier>();
     builder.Services.AddScoped<PosgreSqlVerifier>();
     builder.Services.AddScoped<KeyVaultCertificateVerifier>();
+    builder.Services.AddScoped<KeyVaultKeyVerifier>();
 
     var app = builder.Build();
 
