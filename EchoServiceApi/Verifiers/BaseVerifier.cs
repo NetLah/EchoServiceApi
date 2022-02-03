@@ -11,8 +11,6 @@ namespace EchoServiceApi.Verifiers
 
         public IConfiguration Configuration { get; }
 
-        public abstract Task<VerifyResult> VerifyAsync(string name);
-
         protected ProviderConnectionString GetConnection(string name)
         {
             if (string.IsNullOrEmpty(name))

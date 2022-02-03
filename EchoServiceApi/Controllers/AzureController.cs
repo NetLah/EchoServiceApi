@@ -19,5 +19,18 @@ namespace EchoServiceApi.Controllers
                 return Ok(VerifyResult.Failed(ex));
             }
         }
+
+        public async Task<IActionResult> Cosmos([FromServices] CosmosVerifier cosmosVerifier, string name, string key)
+        {
+            try
+            {
+                var result = await cosmosVerifier.VerifyAsync(name, key);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return Ok(VerifyResult.Failed(ex));
+            }
+        }
     }
 }

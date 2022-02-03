@@ -24,6 +24,15 @@ namespace EchoServiceApi.Verifiers
                 Message = $"{serviceName} '{connectionObj.Name}/{connectionObj.Provider}/{connectionObj.Custom}' is connected"
             };
         }
+
+        public static VerifyResult SuccessObject<TValue>(string serviceName, ProviderConnectionString connectionObj, TValue value)
+        {
+            return new VerifySuccess<TValue>
+            {
+                Message = $"{serviceName} '{connectionObj.Name}/{connectionObj.Provider}/{connectionObj.Custom}' is connected",
+                Value = value,
+            };
+        }
     }
 
     public class VerifyFailed : VerifyResult
@@ -39,5 +48,10 @@ namespace EchoServiceApi.Verifiers
     {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? Message { get; set; }
+    }
+
+    public class VerifySuccess<TValue> : VerifySuccessMessage
+    {
+        public TValue? Value { get; set; }
     }
 }

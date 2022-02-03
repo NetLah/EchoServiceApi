@@ -21,6 +21,7 @@ try
     builder.Services.AddHealthChecks();     // Registers health checks services
 
     builder.Services.AddScoped<CosmosCacheVerifier>();
+    builder.Services.AddScoped<CosmosVerifier>();
 
     var app = builder.Build();
 

@@ -7,11 +7,16 @@ using NetLah.Extensions.Configuration;
 
 namespace EchoServiceApi.Verifiers
 {
+    public class CosmosCacheInfo : CosmosContainerInfo
+    {
+        public bool CreateIfNotExists { get; set; }
+    }
+
     public class CosmosCacheVerifier : BaseVerifier
     {
         public CosmosCacheVerifier(IConfiguration configuration) : base(configuration) { }
 
-        public override async Task<VerifyResult> VerifyAsync(string name)
+        public async Task<VerifyResult> VerifyAsync(string name)
         {
             var connectionObj = GetConnection(name);
             var cosmosCacheInfo = connectionObj.Get<CosmosCacheInfo>();
@@ -22,7 +27,7 @@ namespace EchoServiceApi.Verifiers
             var accountEndpoint = cosmosCacheInfo.AccountEndpoint;
             var accountKey = cosmosCacheInfo.AccountKey;
 
-            var cosmosclient = !string.IsNullOrEmpty(accountKey) ?
+            using var cosmosclient = !string.IsNullOrEmpty(accountKey) ?
                 new CosmosClient(accountEndpoint, accountKey, cosmosClientOptions) :
                 new CosmosClient(accountEndpoint, new DefaultAzureCredential(includeInteractiveCredentials: false), cosmosClientOptions);
 
@@ -38,14 +43,5 @@ namespace EchoServiceApi.Verifiers
 
             return VerifyResult.Successed("CosmosCache", connectionObj);
         }
-    }
-
-    public class CosmosCacheInfo
-    {
-        public bool CreateIfNotExists { get; set; }
-        public string? ContainerName { get; set; }
-        public string? DatabaseName { get; set; }
-        public string? AccountEndpoint { get; set; }
-        public string? AccountKey { get; set; }
     }
 }
