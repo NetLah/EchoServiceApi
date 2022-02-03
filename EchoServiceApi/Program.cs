@@ -1,4 +1,5 @@
-﻿using NetLah.Diagnostics;
+﻿using EchoServiceApi.Verifiers;
+using NetLah.Diagnostics;
 using NetLah.Extensions.Logging;
 
 AppLog.InitLogger();
@@ -16,6 +17,8 @@ try
     builder.Services.AddControllers();
 
     builder.Services.AddHealthChecks();     // Registers health checks services
+
+    builder.Services.AddScoped<CosmosCacheVerifier>();
 
     var app = builder.Build();
 
