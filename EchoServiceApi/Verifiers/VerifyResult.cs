@@ -7,30 +7,35 @@ namespace EchoServiceApi.Verifiers
     {
         public bool Success { get; set; } = true;
 
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string? Detail { get; set; }
+
         public static VerifyResult Failed(Exception ex)
         {
             return new VerifyFailed
             {
                 Success = false,
                 Error = ex.Message,
-                Detail = ex.ToString()
+                Detail = ex.ToString(),
             };
         }
 
-        public static VerifyResult Successed(string serviceName, ProviderConnectionString connectionObj)
+        public static VerifyResult Successed(string serviceName, ProviderConnectionString connectionObj, string? detail = null)
         {
             return new VerifySuccessMessage
             {
-                Message = $"{serviceName} '{connectionObj.Name}/{connectionObj.Provider}/{connectionObj.Custom}' is connected"
+                Message = $"{serviceName} '{connectionObj.Name}/{connectionObj.Provider}/{connectionObj.Custom}' is connected",
+                Detail = detail,
             };
         }
 
-        public static VerifyResult SuccessObject<TValue>(string serviceName, ProviderConnectionString connectionObj, TValue value)
+        public static VerifyResult SuccessObject<TValue>(string serviceName, ProviderConnectionString connectionObj, TValue value, string? detail = null)
         {
             return new VerifySuccess<TValue>
             {
                 Message = $"{serviceName} '{connectionObj.Name}/{connectionObj.Provider}/{connectionObj.Custom}' is connected",
                 Value = value,
+                Detail = detail,
             };
         }
     }
@@ -39,9 +44,6 @@ namespace EchoServiceApi.Verifiers
     {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? Error { get; set; }
-
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public string? Detail { get; set; }
     }
 
     public class VerifySuccessMessage : VerifyResult

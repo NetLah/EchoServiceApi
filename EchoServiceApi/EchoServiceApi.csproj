@@ -27,6 +27,7 @@
     <PackageReference Include="NetLah.Abstractions" />
     <PackageReference Include="NetLah.Extensions.Configuration" />
     <PackageReference Include="NetLah.Extensions.Logging.Serilog.AspNetCore" />
+    <PackageReference Include="Npgsql" />
     <PackageReference Include="Serilog" />
     <PackageReference Include="Serilog.AspNetCore" />
     <PackageReference Include="Serilog.Enrichers.Thread" />

@@ -22,6 +22,7 @@ try
 
     builder.Services.AddScoped<CosmosCacheVerifier>();
     builder.Services.AddScoped<CosmosVerifier>();
+    builder.Services.AddScoped<PosgreSqlVerifier>();
 
     var app = builder.Build();
 

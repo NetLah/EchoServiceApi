@@ -39,7 +39,7 @@ namespace EchoServiceApi.Verifiers
             _ = await container.ReadContainerAsync().ConfigureAwait(false);
 
             var itemResponse = await container.ReadItemAsync<Dictionary<string, object>>(key, new PartitionKey(key));
-            return VerifyResult.SuccessObject("CosmosCache", connectionObj, itemResponse.Resource);
+            return VerifyResult.SuccessObject("Cosmos", connectionObj, itemResponse.Resource);
         }
     }
 }
