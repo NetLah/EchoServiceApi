@@ -46,8 +46,7 @@ namespace EchoServiceApi.Verifiers
 
                 var detail = $"KeyType={keyVaultKey.KeyType}; Text={text}; Signature={signed}; Ciphertext={ciphertext}; Plaintext={decryptText}; ValidSignature={validSignature}";
 
-                return VerifyResult.Successed("KeyVaultKey", connectionObj,
-                    detail: detail);
+                return VerifyResult.Successed("KeyVaultKey", connectionObj, detail: detail);
             }
 
             return new VerifyResult
