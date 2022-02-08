@@ -12,12 +12,13 @@ namespace EchoServiceApi.Verifiers
             _lazy = new Lazy<TokenCredential>(() => GetTokenCredential(configuration));
         }
 
-        private TokenCredential GetTokenCredential(IConfiguration configuration)
+        private static TokenCredential GetTokenCredential(IConfiguration configuration)
         {
             var azure = configuration.GetSection("Azure");
 
-            var options = azure.Get<AzureCredentialInfo>();
-            if (options.TenantId is { } tenantId &&
+            var options = azure.Get<AzureCredentialInfo?>();
+            if (options != null &&
+                options.TenantId is { } tenantId &&
                 options.ClientId is { } clientId &&
                 options.ClientSecret is { } clientSecret)
             {
