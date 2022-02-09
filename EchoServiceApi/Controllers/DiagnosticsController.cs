@@ -94,5 +94,18 @@ namespace EchoServiceApi.Controllers
                 return Ok(VerifyResult.Failed(ex));
             }
         }
+
+        public async Task<IActionResult> Dir([FromServices] DirVerifier dirVerifier, string path)
+        {
+            try
+            {
+                var result = await dirVerifier.VerifyAsync(path);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return Ok(VerifyResult.Failed(ex));
+            }
+        }
     }
 }

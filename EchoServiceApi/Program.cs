@@ -28,6 +28,7 @@ try
     builder.Services.AddScoped<KeyVaultCertificateVerifier>();
     builder.Services.AddScoped<KeyVaultKeyVerifier>();
     builder.Services.AddScoped<BlobUriVerifier>();
+    builder.Services.AddScoped<DirVerifier>();
 
     var app = builder.Build();
 
