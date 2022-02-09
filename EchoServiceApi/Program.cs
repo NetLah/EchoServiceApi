@@ -29,6 +29,7 @@ try
     builder.Services.AddScoped<KeyVaultKeyVerifier>();
     builder.Services.AddScoped<BlobUriVerifier>();
     builder.Services.AddScoped<DirVerifier>();
+    builder.Services.AddScoped<MessageBusVerifier>();
 
     var app = builder.Build();
 

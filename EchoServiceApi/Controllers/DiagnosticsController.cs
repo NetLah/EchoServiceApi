@@ -107,5 +107,18 @@ namespace EchoServiceApi.Controllers
                 return Ok(VerifyResult.Failed(ex));
             }
         }
+
+        public async Task<IActionResult> MessageBus([FromServices] MessageBusVerifier messageBusVerifier, string name, bool send, bool receive, string? queueName)
+        {
+            try
+            {
+                var result = await messageBusVerifier.VerifyAsync(name, send, receive, queueName);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return Ok(VerifyResult.Failed(ex));
+            }
+        }
     }
 }
