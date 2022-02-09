@@ -71,5 +71,28 @@ namespace EchoServiceApi.Controllers
                 return Ok(VerifyResult.Failed(ex));
             }
         }
+
+        public async Task<IActionResult> BlobUri([FromServices] BlobUriVerifier blobUriVerifier, string nameOrUrl)
+        {
+            try
+            {
+                if (Uri.TryCreate(nameOrUrl, UriKind.Absolute, out var blobUri))
+                {
+                    var result = await blobUriVerifier.VerifyAsync(blobUri);
+                    return Ok(result);
+                }
+                else
+                {
+                    var connectionObj = blobUriVerifier.GetConnection(nameOrUrl);
+                    var blobUri1 = new Uri(connectionObj.Value);
+                    var result = await blobUriVerifier.VerifyAsync(blobUri1);
+                    return Ok(result);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Ok(VerifyResult.Failed(ex));
+            }
+        }
     }
 }

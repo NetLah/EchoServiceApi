@@ -27,6 +27,7 @@ try
     builder.Services.AddScoped<PosgreSqlVerifier>();
     builder.Services.AddScoped<KeyVaultCertificateVerifier>();
     builder.Services.AddScoped<KeyVaultKeyVerifier>();
+    builder.Services.AddScoped<BlobUriVerifier>();
 
     var app = builder.Build();
 
