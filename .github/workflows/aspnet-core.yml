@@ -52,14 +52,14 @@ jobs:
             type=match,enable=true,priority=880,prefix=,suffix=${{ env.TAG_SUFFIX }},pattern=^(\d+\.\d+(\.\d+))?(-.+)?$,group=1
             type=match,enable=true,priority=870,prefix=,suffix=${{ env.TAG_SUFFIX }},pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
             type=match,enable=true,priority=860,prefix=,suffix=${{ env.TAG_SUFFIX }},pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
-      - name: Echo meta
-        if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Windows') }}
+      - name: Echo meta Shell
+        if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows')}}
         run: |
           echo "tags: ${{ steps.meta.outputs.tags }}"
           echo "labels: ${{ steps.meta.outputs.labels }}"
       - name: Powershell Echo meta
-        if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Windows') }}
-        shell: powershell
+        if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows')}}
+        shell: pwsh
         run: |
           $tags = "${{ steps.meta.outputs.tags }}"
           $labels = "${{ steps.meta.outputs.tags }}"
