@@ -63,9 +63,11 @@ jobs:
         run: |
           $tags = "${{ steps.meta.outputs.tags }}"
           $labels = "${{ steps.meta.outputs.tags }}"
-          echo "powershell version $PSVersionTable.PSVersion.Major"
+          echo "powershell version $($PSVersionTable.PSVersion)"
           echo "tags: $tags"
           echo "labels: $labels"
+          ./docker-build.ps1 -Tags "${{ steps.meta.outputs.tags }}" -Labels "${{ steps.meta.outputs.tags }}"
+          ./docker-build.ps1 -Tags $tags -Labels $labels
       - name: Install dependencies
         run: dotnet restore
       - name: Build
