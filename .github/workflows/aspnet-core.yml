@@ -30,24 +30,13 @@ jobs:
       - name: MinVer
         id: minver
         run: echo "::set-output name=version::$(dotnet minver)"
-      - name: Docker meta Linux
-        if: ${{ success() && github.event_name != 'pull_request' && runner.os == 'Linux' }}
-        id: meta
-        uses: docker/metadata-action@v3
-        with:
-          images: |
-            ${{ secrets.DOCKER_HUB_REPOS }}
-            netlah/echo-service-api
-          tags: |
-            type=raw,enable=true,priority=999,prefix=,suffix=,value=${{ steps.minver.outputs.version }}
-            type=ref,event=branch,priority=600
-            type=sha,enable=true,priority=500,prefix=sha-,suffix=,format=short
-            type=match,enable=true,priority=900,prefix=,suffix=,pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
-            type=match,enable=true,priority=880,prefix=,suffix=,pattern=^(\d+\.\d+(\.\d+))?(-.+)?$,group=1
-            type=match,enable=true,priority=870,prefix=,suffix=,pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
-            type=match,enable=true,priority=860,prefix=,suffix=,pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
-      - name: Docker meta Windows
+      - name: Set Docker tag suffix=nanoserver-1809
         if: ${{ success() && github.event_name != 'pull_request' && runner.os == 'Windows' }}
+        run: |
+          echo "TAG_SUFFIX=-nanoserver-1809" >> $GITHUB_ENV
+          echo "Set tag suffix to: -nanoserver-1809"
+      - name: Docker meta
+        if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
         id: meta
         uses: docker/metadata-action@v3
         with:
@@ -55,13 +44,13 @@ jobs:
             ${{ secrets.DOCKER_HUB_REPOS }}
             netlah/echo-service-api
           tags: |
-            type=raw,enable=true,priority=999,prefix=,suffix=-nanoserver-1809,value=${{ steps.minver.outputs.version }}
-            type=ref,event=branch,priority=600,prefix=,suffix=-nanoserver-1809
-            type=sha,enable=true,priority=500,prefix=sha-,suffix=-nanoserver-1809,format=short
-            type=match,enable=true,priority=900,prefix=,suffix=-nanoserver-1809,pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
-            type=match,enable=true,priority=880,prefix=,suffix=-nanoserver-1809,pattern=^(\d+\.\d+(\.\d+))?(-.+)?$,group=1
-            type=match,enable=true,priority=870,prefix=,suffix=-nanoserver-1809,pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
-            type=match,enable=true,priority=860,prefix=,suffix=-nanoserver-1809,pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
+            type=raw,enable=true,priority=999,prefix=,suffix=${{ env.TAG_SUFFIX }},value=${{ steps.minver.outputs.version }}
+            type=ref,event=branch,priority=600,prefix=,suffix=${{ env.TAG_SUFFIX }}
+            type=sha,enable=true,priority=500,prefix=sha-,suffix=${{ env.TAG_SUFFIX }},format=short
+            type=match,enable=true,priority=900,prefix=,suffix=${{ env.TAG_SUFFIX }},pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
+            type=match,enable=true,priority=880,prefix=,suffix=${{ env.TAG_SUFFIX }},pattern=^(\d+\.\d+(\.\d+))?(-.+)?$,group=1
+            type=match,enable=true,priority=870,prefix=,suffix=${{ env.TAG_SUFFIX }},pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
+            type=match,enable=true,priority=860,prefix=,suffix=${{ env.TAG_SUFFIX }},pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
       - name: Install dependencies
         run: dotnet restore
       - name: Build
