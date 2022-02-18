@@ -52,22 +52,6 @@ jobs:
             type=match,enable=true,priority=880,prefix=,suffix=${{ env.TAG_SUFFIX }},pattern=^(\d+\.\d+(\.\d+))?(-.+)?$,group=1
             type=match,enable=true,priority=870,prefix=,suffix=${{ env.TAG_SUFFIX }},pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
             type=match,enable=true,priority=860,prefix=,suffix=${{ env.TAG_SUFFIX }},pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
-      - name: Echo meta Shell
-        if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows')}}
-        run: |
-          echo "tags: ${{ steps.meta.outputs.tags }}"
-          echo "labels: ${{ steps.meta.outputs.labels }}"
-      - name: Powershell Echo meta
-        if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows')}}
-        shell: pwsh
-        run: |
-          $tags = "${{ steps.meta.outputs.tags }}"
-          $labels = "${{ steps.meta.outputs.tags }}"
-          echo "powershell version $($PSVersionTable.PSVersion)"
-          echo "tags: $tags"
-          echo "labels: $labels"
-          ./docker-build.ps1 -Tags "${{ steps.meta.outputs.tags }}" -Labels "${{ steps.meta.outputs.tags }}"
-          ./docker-build.ps1 -Tags $tags -Labels $labels
       - name: Install dependencies
         run: dotnet restore
       - name: Build
@@ -94,13 +78,5 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
       - name: Build and push
         if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
-        id: docker_build
-        uses: docker/build-push-action@v2
-        with:
-          context: ./artifacts
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-      - name: Image digest
-        if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
-        run: echo ${{ steps.docker_build.outputs.digest }}
+        shell: pwsh
+        run: ./docker-buildx.ps1 -Context ./artifacts -Tags "${{ steps.meta.outputs.tags }}" -Labels "${{ steps.meta.outputs.tags }}"
