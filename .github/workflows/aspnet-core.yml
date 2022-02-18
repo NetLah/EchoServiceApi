@@ -79,4 +79,4 @@ jobs:
       - name: Build and push
         if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows') }}
         shell: pwsh
-        run: ./docker-buildx.ps1 -Context ./artifacts -Tags "${{ steps.meta.outputs.tags }}" -Labels "${{ steps.meta.outputs.tags }}"
+        run: ./docker-build.ps1 -Context ./artifacts -Tags "${{ steps.meta.outputs.tags }}" -Labels "${{ steps.meta.outputs.tags }}"

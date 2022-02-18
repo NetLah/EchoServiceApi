@@ -21,7 +21,7 @@ if (!$tagStrs) {
     throw 'Tags is required'
 }
 
-$params = @('buildx', 'build', '--pull')
+$params = @('build', '--pull')
 
 if ($labelStrs) {
     $params += $labelStrs | ForEach-Object { @('--label', $_) }
@@ -31,8 +31,13 @@ if ($tagStrs) {
     $params += $tagStrs | ForEach-Object { @('--tag', $_) }
 }
 
-if (!$NoPush) {
-    $params += @('--push')
+if (!$NoPush -And $tagStrs) {
+    foreach ($dockerImageTag in $tagStrs) {
+        docker push $dockerImageTag
+        if (!$?) {
+            exit $LASTEXITCODE
+        }
+    }
 }
 
 docker @params $Context
