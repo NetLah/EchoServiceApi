@@ -31,7 +31,14 @@ if ($tagStrs) {
     $params += $tagStrs | ForEach-Object { @('--tag', $_) }
 }
 
+Write-Host "docker $params $Context"
+docker @params $Context
+if (!$?) {
+    exit $LASTEXITCODE
+}
+
 if (!$NoPush -And $tagStrs) {
+    Write-Host "Pushing docker images"
     foreach ($dockerImageTag in $tagStrs) {
         docker push $dockerImageTag
         if (!$?) {
@@ -39,6 +46,3 @@ if (!$NoPush -And $tagStrs) {
         }
     }
 }
-
-docker @params $Context
-exit $LASTEXITCODE
