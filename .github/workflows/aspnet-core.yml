@@ -67,7 +67,7 @@ jobs:
         if: ${{ success() && github.event_name != 'pull_request' && runner.os == 'Windows' }}
         run: pwsh -c "Copy-Item -Recurse -Force -Path '.docker-windows/*' -Destination artifacts/ -ErrorAction Stop -Verbose"
       - name: Set up Docker Buildx
-        if: ${{ success() && github.event_name != 'pull_request' && (runner.os == 'Linux' || runner.os == 'Windows')}}
+        if: ${{ success() && github.event_name != 'pull_request' && runner.os == 'Linux' }}
         id: buildx
         uses: docker/setup-buildx-action@v1
       - name: Login to Docker Hub
