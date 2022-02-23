@@ -120,5 +120,18 @@ namespace EchoServiceApi.Controllers
                 return Ok(VerifyResult.Failed(ex));
             }
         }
+
+        public async Task<IActionResult> Http([FromServices] HttpVerifier httpVerifier, Uri url, string? host)
+        {
+            try
+            {
+                var result = await httpVerifier.VerifyAsync(url, host);
+                return Content(result);
+            }
+            catch (Exception ex)
+            {
+                return Ok(VerifyResult.Failed(ex));
+            }
+        }
     }
 }

@@ -30,6 +30,8 @@ try
     builder.Services.AddScoped<BlobUriVerifier>();
     builder.Services.AddScoped<DirVerifier>();
     builder.Services.AddScoped<MessageBusVerifier>();
+    builder.Services.AddHttpClient<HttpVerifier>();
+    //builder.Services.AddScoped<HttpVerifier>();
 
     var app = builder.Build();
 
