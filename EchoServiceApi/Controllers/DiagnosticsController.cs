@@ -7,7 +7,22 @@ namespace EchoServiceApi.Controllers
     [ApiController]
     public class DiagnosticsController : ControllerBase
     {
-        public async Task<IActionResult> CosmosCache([FromServices] CosmosCacheVerifier cosmosVerifier, string name)
+        public IActionResult Connection()
+        {
+            try
+            {
+                var request = HttpContext.Request;
+                var remote = HttpContext.Connection;
+                var connectionInfo = $"Server:{request.Scheme}://{request.Host} Client:{remote?.RemoteIpAddress}:{remote?.RemotePort}";
+                return Ok(connectionInfo);
+            }
+            catch (Exception ex)
+            {
+                return Ok(VerifyResult.Failed(ex));
+            }
+        }
+
+        public async Task<IActionResult> CosmosCacheAsync([FromServices] CosmosCacheVerifier cosmosVerifier, string name)
         {
             try
             {
@@ -20,7 +35,7 @@ namespace EchoServiceApi.Controllers
             }
         }
 
-        public async Task<IActionResult> Cosmos([FromServices] CosmosVerifier cosmosVerifier, string name, string key)
+        public async Task<IActionResult> CosmosAsync([FromServices] CosmosVerifier cosmosVerifier, string name, string key)
         {
             try
             {
@@ -33,7 +48,7 @@ namespace EchoServiceApi.Controllers
             }
         }
 
-        public async Task<IActionResult> PostgreSql([FromServices] PosgreSqlVerifier posgreSqlVerifier, string name, string tableName)
+        public async Task<IActionResult> PostgreSqlAsync([FromServices] PosgreSqlVerifier posgreSqlVerifier, string name, string tableName)
         {
             try
             {
@@ -46,7 +61,7 @@ namespace EchoServiceApi.Controllers
             }
         }
 
-        public async Task<IActionResult> KeyVaultCertificate([FromServices] KeyVaultCertificateVerifier keyVaultCertificateVerifier, string name, bool privateKey)
+        public async Task<IActionResult> KeyVaultCertificateAsync([FromServices] KeyVaultCertificateVerifier keyVaultCertificateVerifier, string name, bool privateKey)
         {
             try
             {
@@ -59,7 +74,7 @@ namespace EchoServiceApi.Controllers
             }
         }
 
-        public async Task<IActionResult> KeyVaultKey([FromServices] KeyVaultKeyVerifier keyVaultKeyVerifier, string name)
+        public async Task<IActionResult> KeyVaultKeyAsync([FromServices] KeyVaultKeyVerifier keyVaultKeyVerifier, string name)
         {
             try
             {
@@ -72,7 +87,7 @@ namespace EchoServiceApi.Controllers
             }
         }
 
-        public async Task<IActionResult> BlobUri([FromServices] BlobUriVerifier blobUriVerifier, string nameOrUrl)
+        public async Task<IActionResult> BlobUriAsync([FromServices] BlobUriVerifier blobUriVerifier, string nameOrUrl)
         {
             try
             {
@@ -95,7 +110,7 @@ namespace EchoServiceApi.Controllers
             }
         }
 
-        public async Task<IActionResult> Dir([FromServices] DirVerifier dirVerifier, string path)
+        public async Task<IActionResult> DirAsync([FromServices] DirVerifier dirVerifier, string path)
         {
             try
             {
@@ -108,7 +123,7 @@ namespace EchoServiceApi.Controllers
             }
         }
 
-        public async Task<IActionResult> MessageBus([FromServices] MessageBusVerifier messageBusVerifier, string name, bool send, bool receive, string? queueName)
+        public async Task<IActionResult> MessageBusAsync([FromServices] MessageBusVerifier messageBusVerifier, string name, bool send, bool receive, string? queueName)
         {
             try
             {
@@ -121,7 +136,7 @@ namespace EchoServiceApi.Controllers
             }
         }
 
-        public async Task<IActionResult> Http([FromServices] HttpVerifier httpVerifier, Uri url, string? host)
+        public async Task<IActionResult> HttpAsync([FromServices] HttpVerifier httpVerifier, Uri url, string? host)
         {
             try
             {
