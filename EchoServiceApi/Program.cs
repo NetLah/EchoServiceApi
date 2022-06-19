@@ -33,6 +33,9 @@ try
     builder.Services.AddScoped<MessageBusVerifier>();
     builder.Services.AddHttpClient<HttpVerifier>();
 
+    builder.Services.AddHttpContextAccessor();
+    builder.Services.AddScoped<HttpContextInfo>();
+
     builder.Services.AddHttpOverrides(builder.Configuration);
 
     var app = builder.Build();

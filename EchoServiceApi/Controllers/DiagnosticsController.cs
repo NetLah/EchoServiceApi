@@ -7,13 +7,18 @@ namespace EchoServiceApi.Controllers
     [ApiController]
     public class DiagnosticsController : ControllerBase
     {
-        public IActionResult Connection()
+        public IActionResult Connection([FromServices] HttpContextInfo httpContextInfo)
         {
             try
             {
                 var request = HttpContext.Request;
                 var remote = HttpContext.Connection;
-                var connectionInfo = $"Server:{request.Scheme}://{request.Host} Client:{remote?.RemoteIpAddress}:{remote?.RemotePort}";
+                var remoteIpAddress = remote.RemoteIpAddress?.ToString();
+                if (remoteIpAddress?.Contains(':') == true)
+                {
+                    remoteIpAddress = $"[{remoteIpAddress}]";
+                }
+                var connectionInfo = $"Server:{request.Scheme}://{httpContextInfo.Host}:{httpContextInfo.Port} Client:{remoteIpAddress}:{remote?.RemotePort}";
                 return Ok(connectionInfo);
             }
             catch (Exception ex)
