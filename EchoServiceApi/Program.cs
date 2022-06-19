@@ -39,6 +39,8 @@ try
 
     logger.LogInformation("Environment: {environmentName}; DeveloperMode:{isDevelopment}", app.Environment.EnvironmentName, app.Environment.IsDevelopment());
 
+    app.UseHttpOverrides(logger);
+
 #pragma warning disable S3923 // All branches in a conditional structure should not have exactly the same implementation
     if (app.Environment.IsDevelopment())
 #pragma warning restore S3923 // All branches in a conditional structure should not have exactly the same implementation
@@ -58,8 +60,6 @@ try
     });
 
     app.UseHealthChecks("/healthz");
-
-    app.UseHttpOverrides(logger);
 
     // app.UseHttpsRedirection()
 
