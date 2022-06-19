@@ -33,6 +33,11 @@ public static class HttpOverridesExtensions
         var optionsForwardedHeadersOptions = sp.GetRequiredService<IOptions<ForwardedHeadersOptions>>();
         var fho = optionsForwardedHeadersOptions.Value;
 
+        if (fho.KnownProxies.Count > 0 || fho.KnownNetworks.Count > 0 || fho.ForwardedHeaders != ForwardedHeaders.None)
+        {
+            logger.LogInformation("ForwardLimit: {forwardLimit}", fho.ForwardLimit);
+        }
+
         if (fho.KnownProxies.Count > 0)
         {
             var knownProxies = string.Join(",", fho.KnownProxies);
