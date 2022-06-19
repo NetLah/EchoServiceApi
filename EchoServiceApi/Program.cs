@@ -59,7 +59,7 @@ try
 
     app.UseHealthChecks("/healthz");
 
-    app.LogUseHttpOverrides(logger);
+    app.UseHttpOverrides(logger);
 
     // app.UseHttpsRedirection()
 

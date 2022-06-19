@@ -5,10 +5,13 @@ namespace EchoServiceApi;
 
 public static class HttpOverridesExtensions
 {
+    private static bool _notForwardedHeadersEnabled;
+
     public static IServiceCollection AddHttpOverrides(this IServiceCollection services, IConfiguration configuration, string httpOverridesSectionName = "HttpOverrides")
     {
         var forwardedHeadersEnabled = configuration["ASPNETCORE_FORWARDEDHEADERS_ENABLED"];
-        if (!string.Equals(forwardedHeadersEnabled, "true", StringComparison.OrdinalIgnoreCase))
+        _notForwardedHeadersEnabled = !string.Equals(forwardedHeadersEnabled, "true", StringComparison.OrdinalIgnoreCase);
+        if (_notForwardedHeadersEnabled)
         {
             var configurationSection = string.IsNullOrEmpty(httpOverridesSectionName) ? configuration : configuration.GetSection(httpOverridesSectionName);
             services.Configure<ForwardedHeadersOptions>(configurationSection);
@@ -24,7 +27,7 @@ public static class HttpOverridesExtensions
         return services;
     }
 
-    public static IApplicationBuilder LogUseHttpOverrides(this IApplicationBuilder app, ILogger logger)
+    public static IApplicationBuilder UseHttpOverrides(this IApplicationBuilder app, ILogger logger)
     {
         var sp = app.ApplicationServices;
         var optionsForwardedHeadersOptions = sp.GetRequiredService<IOptions<ForwardedHeadersOptions>>();
@@ -46,7 +49,15 @@ public static class HttpOverridesExtensions
         if (fho.ForwardedHeaders != ForwardedHeaders.None)
         {
             var forwardedHeaders = string.Join(",", fho.ForwardedHeaders);
-            logger.LogInformation("ForwardedHeaders: {forwardedHeaders}", forwardedHeaders);
+            if (_notForwardedHeadersEnabled)
+            {
+                app.UseForwardedHeaders();
+                logger.LogInformation("Use ForwardedHeaders: {forwardedHeaders}", forwardedHeaders);
+            }
+            else
+            {
+                logger.LogInformation("ForwardedHeaders: {forwardedHeaders}", forwardedHeaders);
+            }
         }
 
         return app;
