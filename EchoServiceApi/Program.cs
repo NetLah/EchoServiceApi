@@ -1,4 +1,5 @@
-﻿using EchoServiceApi.Verifiers;
+﻿using EchoServiceApi;
+using EchoServiceApi.Verifiers;
 using NetLah.Diagnostics;
 using NetLah.Extensions.Logging;
 using Serilog.AspNetCore;
@@ -31,7 +32,8 @@ try
     builder.Services.AddScoped<DirVerifier>();
     builder.Services.AddScoped<MessageBusVerifier>();
     builder.Services.AddHttpClient<HttpVerifier>();
-    //builder.Services.AddScoped<HttpVerifier>();
+
+    builder.Services.AddHttpOverrides(builder.Configuration);
 
     var app = builder.Build();
 
@@ -56,6 +58,8 @@ try
     });
 
     app.UseHealthChecks("/healthz");
+
+    app.LogUseHttpOverrides(logger);
 
     // app.UseHttpsRedirection()
 
