@@ -71,9 +71,12 @@ public static class HttpOverridesExtensions
     private static void ProcessKnownNetworks(IConfiguration configuration, ForwardedHeadersOptions options)
     {
         var knownNetworks = configuration["KnownNetworks"];
-        if (!string.IsNullOrEmpty(knownNetworks))
+        if (knownNetworks != null)
         {
             options.KnownNetworks.Clear();
+        }
+        if (!string.IsNullOrEmpty(knownNetworks))
+        {
             foreach (var item in knownNetworks.Split(new char[] { ',', '|', ';', ' ' }, StringSplitOptions.RemoveEmptyEntries))
             {
                 if (!string.IsNullOrEmpty(item))
@@ -99,9 +102,12 @@ public static class HttpOverridesExtensions
     private static void ProcessKnownProxies(IConfiguration configuration, ForwardedHeadersOptions options)
     {
         var knownProxies = configuration["KnownProxies"];
-        if (!string.IsNullOrEmpty(knownProxies))
+        if (knownProxies != null)
         {
             options.KnownProxies.Clear();
+        }
+        if (!string.IsNullOrEmpty(knownProxies))
+        {
             foreach (var item in knownProxies.Split(new char[] { ',', '|', ';', ' ' }, StringSplitOptions.RemoveEmptyEntries))
             {
                 if (!string.IsNullOrEmpty(item))
