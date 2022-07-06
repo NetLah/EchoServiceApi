@@ -65,6 +65,12 @@ public static class HttpOverridesExtensions
             }
         }
 
+        if (fho.AllowedHosts.Count > 0)
+        {
+            var allowedHosts = string.Join(",", fho.AllowedHosts);
+            logger.LogInformation("AllowedHosts: {allowedHosts}", allowedHosts);
+        }
+
         return app;
     }
 
