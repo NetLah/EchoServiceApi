@@ -33,6 +33,12 @@ public static class HttpOverridesExtensions
         var optionsForwardedHeadersOptions = sp.GetRequiredService<IOptions<ForwardedHeadersOptions>>();
         var fho = optionsForwardedHeadersOptions.Value;
 
+        var hostFilteringOptions = sp.GetRequiredService<IOptions<Microsoft.AspNetCore.HostFiltering.HostFilteringOptions>>();
+        if (hostFilteringOptions?.Value is { } hostFiltering)
+        {
+            logger.LogInformation("HostFiltering: {@hostFiltering}", hostFiltering);
+        }
+
         if (fho.KnownProxies.Count > 0 || fho.KnownNetworks.Count > 0 || fho.ForwardedHeaders != ForwardedHeaders.None)
         {
             logger.LogInformation("ForwardLimit: {forwardLimit}", fho.ForwardLimit);
