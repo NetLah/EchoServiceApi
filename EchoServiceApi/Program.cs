@@ -77,7 +77,7 @@ try
     app.Lifetime.ApplicationStarted.Register(() => LogAppEvent(logger, "ApplicationStarted", appInfo));
     app.Lifetime.ApplicationStopping.Register(() => LogAppEvent(logger, "ApplicationStopping", appInfo));
     app.Lifetime.ApplicationStopped.Register(() => LogAppEvent(logger, "ApplicationStopped", appInfo));
-
+    app.Logger.LogInformation("Finished configuring application");
     app.Run();
 
     static void LogAppEvent(ILogger logger, string appEvent, IAssemblyInfo appInfo)
