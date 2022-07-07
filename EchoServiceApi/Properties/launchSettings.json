@@ -13,7 +13,7 @@
       "commandName": "Project",
       "launchUrl": "weatherforecast",
       "environmentVariables": {
-        "ASPNETCORE_FORWARDEDHEADERS_ENABLED": "True",
+        "ASPNETCORE_FORWARDEDHEADERS_ENABLED": "False",
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": "true",
