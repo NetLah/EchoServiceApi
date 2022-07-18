@@ -1,6 +1,6 @@
-# ASPNET.Core 5 Echo Service WebApi
+# ASPNET.Core 6 Echo Service WebApi
 
-ASPNET.Core 5 WebApi provide Echo Service Api for troubleshooting deployment and integration. This is useful tool on detecting deployment (setup environment) and development issue OAuth and OIDC with deployment environment.
+ASPNET.Core 6 WebApi provide Echo Service Api for troubleshooting deployment and integration. This is useful tool on detecting deployment (setup environment) and development issue OAuth and OIDC with deployment environment.
 
 ## Build Status
 

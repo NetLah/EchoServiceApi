@@ -1,5 +1,9 @@
-﻿using NetLah.Diagnostics;
+﻿using EchoServiceApi;
+using EchoServiceApi.Verifiers;
+using NetLah.Diagnostics;
 using NetLah.Extensions.Logging;
+using Serilog.AspNetCore;
+using Serilog.Events;
 
 AppLog.InitLogger();
 AppLog.Logger.LogInformation("Application configure...");
@@ -17,9 +21,28 @@ try
 
     builder.Services.AddHealthChecks();     // Registers health checks services
 
+    builder.Services.AddSingleton<TokenCredentialFactory>();
+
+    builder.Services.AddScoped<CosmosCacheVerifier>();
+    builder.Services.AddScoped<CosmosVerifier>();
+    builder.Services.AddScoped<PosgreSqlVerifier>();
+    builder.Services.AddScoped<KeyVaultCertificateVerifier>();
+    builder.Services.AddScoped<KeyVaultKeyVerifier>();
+    builder.Services.AddScoped<BlobUriVerifier>();
+    builder.Services.AddScoped<DirVerifier>();
+    builder.Services.AddScoped<MessageBusVerifier>();
+    builder.Services.AddHttpClient<HttpVerifier>();
+
+    builder.Services.AddHttpContextAccessor();
+    builder.Services.AddScoped<HttpContextInfo>();
+
+    builder.Services.AddHttpOverrides(builder.Configuration);
+
     var app = builder.Build();
 
     logger.LogInformation("Environment: {environmentName}; DeveloperMode:{isDevelopment}", app.Environment.EnvironmentName, app.Environment.IsDevelopment());
+
+    app.UseHttpOverrides(logger);
 
 #pragma warning disable S3923 // All branches in a conditional structure should not have exactly the same implementation
     if (app.Environment.IsDevelopment())
@@ -33,7 +56,11 @@ try
         // app.UseHsts()
     }
 
-    app.UseSerilogRequestLoggingLevel(LogLevel.Information);
+    // app.UseSerilogRequestLoggingLevel(LogLevel.Information)
+    Serilog.SerilogApplicationBuilderExtensions.UseSerilogRequestLogging(app, delegate (RequestLoggingOptions opt)
+    {
+        opt.GetLevel = ((HttpContext c, double d, Exception e) => (!(c.Response.StatusCode >= 500) && e == null) ? LogEventLevel.Information : LogEventLevel.Error);
+    });
 
     app.UseHealthChecks("/healthz");
 
@@ -50,7 +77,7 @@ try
     app.Lifetime.ApplicationStarted.Register(() => LogAppEvent(logger, "ApplicationStarted", appInfo));
     app.Lifetime.ApplicationStopping.Register(() => LogAppEvent(logger, "ApplicationStopping", appInfo));
     app.Lifetime.ApplicationStopped.Register(() => LogAppEvent(logger, "ApplicationStopped", appInfo));
-
+    app.Logger.LogInformation("Finished configuring application");
     app.Run();
 
     static void LogAppEvent(ILogger logger, string appEvent, IAssemblyInfo appInfo)
