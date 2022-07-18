@@ -11,7 +11,7 @@ namespace EchoServiceApi.Verifiers
         public bool CreateIfNotExists { get; set; }
     }
 
-    public class CosmosCacheVerifier : BaseVerifier
+    public class CosmosCacheVerifier : BaseCosmosVerifier
     {
         public CosmosCacheVerifier(IServiceProvider serviceProvider) : base(serviceProvider) { }
 
@@ -19,16 +19,13 @@ namespace EchoServiceApi.Verifiers
         {
             var connectionObj = GetConnection(name);
             var cosmosCacheInfo = connectionObj.Get<CosmosCacheInfo>();
-            var cosmosClientOptions = connectionObj.Get<CosmosClientOptions>();
 
-            var containerName = cosmosCacheInfo.ContainerName;
             var databaseName = cosmosCacheInfo.DatabaseName;
-            var accountEndpoint = cosmosCacheInfo.AccountEndpoint;
-            var accountKey = cosmosCacheInfo.AccountKey;
+            var containerName = cosmosCacheInfo.ContainerName;
 
-            using var cosmosclient = !string.IsNullOrEmpty(accountKey) ?
-                new CosmosClient(accountEndpoint, accountKey, cosmosClientOptions) :
-                new CosmosClient(accountEndpoint, TokenFactory.GetTokenCredential(), cosmosClientOptions);
+            using var cosmosclient = CreateClient(connectionObj, cosmosCacheInfo);
+
+            var cosmosClientOptions = connectionObj.Get<CosmosClientOptions>();
 
             var cosmosCacheOptions = new CosmosCacheOptions
             {
