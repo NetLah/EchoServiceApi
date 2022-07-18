@@ -1,5 +1,4 @@
-﻿using Azure.Identity;
-using Azure.Security.KeyVault.Certificates;
+﻿using Azure.Security.KeyVault.Certificates;
 using Azure.Security.KeyVault.Secrets;
 using System.Security.Cryptography.X509Certificates;
 
@@ -7,7 +6,13 @@ namespace EchoServiceApi.Verifiers
 {
     public class KeyVaultCertificateVerifier : BaseVerifier
     {
-        public KeyVaultCertificateVerifier(IServiceProvider serviceProvider) : base(serviceProvider) { }
+        private readonly ILogger _logger;
+
+        public KeyVaultCertificateVerifier(IServiceProvider serviceProvider, ILogger<KeyVaultCertificateVerifier> logger)
+            : base(serviceProvider)
+        {
+            _logger = logger;
+        }
 
         public async Task<VerifyResult> VerifyAsync(string name, bool privateKey)
         {
@@ -20,6 +25,8 @@ namespace EchoServiceApi.Verifiers
             var locationParts = vaultUri.LocalPath.Split('/');
             X509Certificate2? cert = null;
             Func<X509Certificate2?, string> factory = cert => $"Subject={cert?.Subject}; Expires={cert?.GetExpirationDateString()}; HasPrivateKey={privateKey}";
+
+            _logger.LogInformation("KeyVaultCertificateVerifier: name={query_name} privateKey={query_privateKey}", name, privateKey);
 
             if (locationParts.Length >= 3 && "certificates" == locationParts[1])
             {

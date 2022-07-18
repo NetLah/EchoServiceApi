@@ -3,7 +3,13 @@ namespace EchoServiceApi.Verifiers
 {
     public class PosgreSqlVerifier : BaseVerifier
     {
-        public PosgreSqlVerifier(IServiceProvider serviceProvider) : base(serviceProvider) { }
+        private readonly ILogger _logger;
+
+        public PosgreSqlVerifier(IServiceProvider serviceProvider, ILogger<PosgreSqlVerifier> logger)
+            : base(serviceProvider)
+        {
+            _logger = logger;
+        }
 
         public async Task<VerifyResult> VerifyAsync(string name, string tableName)
         {
@@ -13,6 +19,9 @@ namespace EchoServiceApi.Verifiers
             var connectionObj = GetConnection(name);
             var connectionString = connectionObj.Value;
             using var connection = new Npgsql.NpgsqlConnection(connectionString);
+
+            _logger.LogInformation("PosgreSqlVerifier: name={query_name} tableName={query_tableName}", name, tableName);
+
             await connection.OpenAsync();
             using var command = connection.CreateCommand();
             var query = command.CommandText = "SELECT 1 FROM " + tableName;

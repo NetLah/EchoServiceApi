@@ -10,7 +10,13 @@ namespace EchoServiceApi.Verifiers
 
     public class MessageBusVerifier : BaseVerifier
     {
-        public MessageBusVerifier(IServiceProvider serviceProvider) : base(serviceProvider) { }
+        private readonly ILogger _logger;
+
+        public MessageBusVerifier(IServiceProvider serviceProvider, ILogger<MessageBusVerifier> logger)
+            : base(serviceProvider)
+        {
+            _logger = logger;
+        }
 
         public async Task<VerifyResult> VerifyAsync(string name, bool send, bool receive, string? queueName)
         {
@@ -20,6 +26,9 @@ namespace EchoServiceApi.Verifiers
             {
                 queueName = connectionObj.Get<MessageBusVerifierInfo1>().QueueName ?? throw new Exception("QueueName is required");
             }
+
+            _logger.LogInformation("MessageBusVerifier: name={query_name} send={query_send} receive={query_receive} queueName={query_queueName}",
+                name, send, receive, queueName);
 
             ServiceBusSender? sender = null;
             ServiceBusReceiver? receiver = null;

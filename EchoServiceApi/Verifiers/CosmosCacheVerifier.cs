@@ -1,5 +1,4 @@
-﻿using Microsoft.Azure.Cosmos;
-using Microsoft.Extensions.Caching.Cosmos;
+﻿using Microsoft.Extensions.Caching.Cosmos;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 using NetLah.Extensions.Configuration;
@@ -13,7 +12,13 @@ namespace EchoServiceApi.Verifiers
 
     public class CosmosCacheVerifier : BaseCosmosVerifier
     {
-        public CosmosCacheVerifier(IServiceProvider serviceProvider) : base(serviceProvider) { }
+        private readonly ILogger _logger;
+
+        public CosmosCacheVerifier(IServiceProvider serviceProvider, ILogger<CosmosCacheVerifier> logger)
+            : base(serviceProvider)
+        {
+            _logger = logger;
+        }
 
         public async Task<VerifyResult> VerifyAsync(string name)
         {
@@ -25,7 +30,8 @@ namespace EchoServiceApi.Verifiers
 
             using var cosmosclient = CreateClient(connectionObj, cosmosCacheInfo);
 
-            var cosmosClientOptions = connectionObj.Get<CosmosClientOptions>();
+            _logger.LogInformation("CosmosCacheVerifier db:{databaseName} container:{containerName} name={query_name}",
+                databaseName, containerName, name);
 
             var cosmosCacheOptions = new CosmosCacheOptions
             {

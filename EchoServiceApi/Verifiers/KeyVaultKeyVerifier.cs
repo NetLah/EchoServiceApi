@@ -7,7 +7,13 @@ namespace EchoServiceApi.Verifiers
 {
     public class KeyVaultKeyVerifier : BaseVerifier
     {
-        public KeyVaultKeyVerifier(IServiceProvider serviceProvider) : base(serviceProvider) { }
+        private readonly ILogger _logger;
+
+        public KeyVaultKeyVerifier(IServiceProvider serviceProvider, ILogger<KeyVaultKeyVerifier> logger)
+            : base(serviceProvider)
+        {
+            _logger = logger;
+        }
 
         public async Task<VerifyResult> VerifyAsync(string name)
         {
@@ -15,6 +21,8 @@ namespace EchoServiceApi.Verifiers
             var vaultUri = new Uri(connectionObj.Value);
 
             var tokenCredential = TokenFactory.GetTokenCredential();
+
+            _logger.LogInformation("KeyVaultKeyVerifier: name={query_name}", name);
 
             var keyIdentifier = new Uri(vaultUri, "/");
             var locationParts = vaultUri.LocalPath.Split('/');

@@ -10,6 +10,7 @@ public class CosmosContainerInfo
     public string? AccountEndpoint { get; set; }
     public string? AccountKey { get; set; }
     public string? ManagedIdentityClientId { get; set; }
+    public string? ManagedIdentityResourceId { get; set; }
 }
 
 public abstract class BaseCosmosVerifier : BaseVerifier
@@ -20,14 +21,21 @@ public abstract class BaseCosmosVerifier : BaseVerifier
     {
         var cosmosClientOptions = providerConnectionString.Get<CosmosClientOptions>();
         var accountEndpoint = cosmosInfo.AccountEndpoint;
-        var accountKey = cosmosInfo.AccountKey;
         var managedIdentityClientId = cosmosInfo.ManagedIdentityClientId;
 
         if (!string.IsNullOrEmpty(managedIdentityClientId))
-            return new CosmosClient(accountEndpoint, TokenFactory.GetManagedIdentity(managedIdentityClientId), cosmosClientOptions);
+            return new CosmosClient(accountEndpoint, TokenFactory.GetManagedIdentityClientId(managedIdentityClientId), cosmosClientOptions);
+        
+        var managedIdentityResourceId = cosmosInfo.ManagedIdentityResourceId;
+        if (!string.IsNullOrEmpty(managedIdentityResourceId))
+            return new CosmosClient(accountEndpoint, TokenFactory.GetManagedIdentityResourceId(managedIdentityResourceId), cosmosClientOptions);
 
+        var accountKey = cosmosInfo.AccountKey;
         if (!string.IsNullOrEmpty(accountKey))
+        {
+            TokenFactory.PushCredentialType("accountKey", TokenFactory.Redact(accountKey));
             return new CosmosClient(accountEndpoint, accountKey, cosmosClientOptions);
+        }
 
         return new CosmosClient(accountEndpoint, TokenFactory.GetTokenCredential(), cosmosClientOptions);
     }

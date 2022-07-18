@@ -7,12 +7,20 @@ namespace EchoServiceApi.Verifiers
 {
     public class BlobUriVerifier : BaseVerifier
     {
-        public BlobUriVerifier(IServiceProvider serviceProvider) : base(serviceProvider) { }
+        private readonly ILogger _logger;
+
+        public BlobUriVerifier(IServiceProvider serviceProvider, ILogger<BlobUriVerifier> logger)
+            : base(serviceProvider)
+        {
+            _logger = logger;
+        }
 
         public async Task<VerifyResult> VerifyAsync(Uri blobUri)
         {
             var tokenCredential = TokenFactory.GetTokenCredential();
             var blobClient = new BlobClient(blobUri, tokenCredential);
+
+            _logger.LogInformation("BlobUriVerifier: Try access {query_blobUri}", blobUri);
 
             var isExist = (await blobClient.ExistsAsync()).Value;
 
