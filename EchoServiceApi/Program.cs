@@ -36,6 +36,8 @@ try
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddScoped<HttpContextInfo>();
 
+    builder.Services.AddScoped<DisagnosticInfo>();
+
     builder.Services.AddHttpOverrides(builder.Configuration);
 
     var app = builder.Build();

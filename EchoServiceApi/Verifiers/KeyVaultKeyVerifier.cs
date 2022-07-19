@@ -8,10 +8,12 @@ namespace EchoServiceApi.Verifiers
     public class KeyVaultKeyVerifier : BaseVerifier
     {
         private readonly ILogger _logger;
+        private readonly DisagnosticInfo _myInfos;
 
-        public KeyVaultKeyVerifier(IServiceProvider serviceProvider, ILogger<KeyVaultKeyVerifier> logger)
+        public KeyVaultKeyVerifier(IServiceProvider serviceProvider, ILogger<KeyVaultKeyVerifier> logger, DisagnosticInfo myInfos)
             : base(serviceProvider)
         {
+            _myInfos = myInfos;
             _logger = logger;
         }
 
@@ -20,7 +22,8 @@ namespace EchoServiceApi.Verifiers
             var connectionObj = GetConnection(name);
             var vaultUri = new Uri(connectionObj.Value);
 
-            var tokenCredential = TokenFactory.GetTokenCredential();
+            var tokenCredential = await TokenFactory.GetTokenCredentialAsync();
+            using var scope = _logger.BeginScope(_myInfos.LoggingScopeState);
 
             _logger.LogInformation("KeyVaultKeyVerifier: name={query_name}", name);
 

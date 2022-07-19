@@ -24,7 +24,7 @@ namespace EchoServiceApi.Verifiers
             var containerName = cosmosInfo.ContainerName;
             var databaseName = cosmosInfo.DatabaseName;
 
-            using var cosmosclient = CreateClient(connectionObj, cosmosInfo);
+            using var cosmosclient = await CreateClientAsync(connectionObj, cosmosInfo);
 
             _logger.LogInformation("CosmosVerifier db:{databaseName} container:{containerName} name={query_name} key={query_key}",
                 databaseName, containerName, name, key);

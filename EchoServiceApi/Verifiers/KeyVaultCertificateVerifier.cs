@@ -19,7 +19,7 @@ namespace EchoServiceApi.Verifiers
             var connectionObj = GetConnection(name);
             var vaultUri = new Uri(connectionObj.Value);
 
-            var tokenCredential = TokenFactory.GetTokenCredential();
+            var tokenCredential = await TokenFactory.GetTokenCredentialAsync();
 
             var certificateIdentifier = new Uri(vaultUri, "/");
             var locationParts = vaultUri.LocalPath.Split('/');

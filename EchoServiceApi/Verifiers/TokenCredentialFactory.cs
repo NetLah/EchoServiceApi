@@ -7,17 +7,15 @@ namespace EchoServiceApi.Verifiers
     public class TokenCredentialFactory
     {
         private readonly IConfiguration _configuration;
-        private readonly ILogger _logger;
         private readonly Lazy<TokenCredential> _lazyDefault;
         private readonly ConcurrentDictionary<string, TokenCredential> _managedIdentityClientIds;
         private readonly ConcurrentDictionary<ResourceIdentifier, TokenCredential> _managedIdentityResourceIds;
         private readonly ConcurrentDictionary<string, TokenCredential> _clientSecretsIdentities;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public TokenCredentialFactory(IConfiguration configuration, ILogger<TokenCredentialFactory> logger, IHttpContextAccessor httpContextAccessor)
+        public TokenCredentialFactory(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
-            _logger = logger;
             _lazyDefault = new Lazy<TokenCredential>(() => new DefaultAzureCredential(includeInteractiveCredentials: false));
             _managedIdentityClientIds = new ConcurrentDictionary<string, TokenCredential>();
             _managedIdentityResourceIds = new ConcurrentDictionary<ResourceIdentifier, TokenCredential>();
@@ -25,7 +23,7 @@ namespace EchoServiceApi.Verifiers
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public TokenCredential GetTokenCredential()
+        public Task<TokenCredential> GetTokenCredentialAsync()
         {
             var azure = _configuration.GetSection("Azure");
 
@@ -34,23 +32,23 @@ namespace EchoServiceApi.Verifiers
             {
                 if (options.ManagedIdentityClientId is { } managedIdentityClientId)
                 {
-                    return GetManagedIdentityClientId(managedIdentityClientId);
+                    return GetManagedIdentityClientIdAsync(managedIdentityClientId);
                 }
 
                 if (options.ManagedIdentityResourceId is { } managedIdentityResourceId)
                 {
-                    return GetManagedIdentityResourceId(managedIdentityResourceId);
+                    return GetManagedIdentityResourceIdAsync(managedIdentityResourceId);
                 }
 
                 if (options.TenantId is { } tenantId &&
                     options.ClientId is { } clientId &&
                     options.ClientSecret is { } clientSecret)
                 {
-                    return GetClientSecretCredential(tenantId, clientId, clientSecret);
+                    return GetClientSecretCredentialAsync(tenantId, clientId, clientSecret);
                 }
             }
 
-            return GetDefaultAzureCredential();
+            return GetDefaultAzureCredentialAsync();
         }
 
         public string? Redact(string? secret)
@@ -67,48 +65,53 @@ namespace EchoServiceApi.Verifiers
             return $"{secret[..6]}-REDACTED";
         }
 
-        public void PushCredentialType(string credentialType, object? value)
+        private async Task<TokenCredential> PushCredentialTypeAsync(string credentialType, object? value, TokenCredential tokenCredential)
+        {
+            async Task RenderCredentialAsync(HttpContext httpContext, Dictionary<string, object?> state)
+            {
+                await Task.CompletedTask;
+            }
+
+            await PushCredentialTypeAsync(credentialType, value, RenderCredentialAsync);
+            return tokenCredential;
+        }
+
+        public async Task PushCredentialTypeAsync(string credentialType, object? value, Func<HttpContext, Dictionary<string, object?>, Task>? func = null)
         {
             if (_httpContextAccessor.HttpContext is { } httpContext &&
                 httpContext.Response is { } response)
             {
-                var state = new Dictionary<string, object?> { ["credential_type"] = credentialType };
+                var myInfos = httpContext.RequestServices.GetRequiredService<DisagnosticInfo>();
+                var state = myInfos.LoggingScopeState;
+                state["credential_type"] = credentialType;
 
                 if (credentialType != "default" || value != null)
                     state[$"credential_{credentialType}"] = value;
 
-                var disposable = _logger.BeginScope(state);
-
-                response.RegisterForDispose(disposable);
+                if (func != null)
+                {
+                    await func(httpContext, state);
+                }
             }
         }
 
-        public TokenCredential GetDefaultAzureCredential()
-        {
-            PushCredentialType("default", null);
-            return _lazyDefault.Value;
-        }
+        public Task<TokenCredential> GetDefaultAzureCredentialAsync()
+            => PushCredentialTypeAsync("default", null, _lazyDefault.Value);
 
-        public TokenCredential GetManagedIdentityClientId(string managedIdentityClientId)
-        {
-            PushCredentialType("managedIdentityClientId", managedIdentityClientId);
-            return _managedIdentityClientIds.GetOrAdd(managedIdentityClientId, _ => new ManagedIdentityCredential(managedIdentityClientId));
-        }
+        public Task<TokenCredential> GetManagedIdentityClientIdAsync(string managedIdentityClientId)
+            => PushCredentialTypeAsync("managedIdentityClientId",
+                managedIdentityClientId,
+                _managedIdentityClientIds.GetOrAdd(managedIdentityClientId, _ => new ManagedIdentityCredential(managedIdentityClientId)));
 
-        public TokenCredential GetManagedIdentityResourceId(string managedIdentityResourceId) =>
-            GetManagedIdentityResourceId(new ResourceIdentifier(managedIdentityResourceId));
+        public Task<TokenCredential> GetManagedIdentityResourceIdAsync(string managedIdentityResourceId) =>
+            GetManagedIdentityResourceIdAsync(new ResourceIdentifier(managedIdentityResourceId));
 
-        public TokenCredential GetManagedIdentityResourceId(ResourceIdentifier resourceId)
-        {
-            PushCredentialType("managedIdentityResourceId", resourceId);
-            return _managedIdentityResourceIds.GetOrAdd(resourceId, _ => new ManagedIdentityCredential(resourceId));
-        }
+        public Task<TokenCredential> GetManagedIdentityResourceIdAsync(ResourceIdentifier resourceId)
+            => PushCredentialTypeAsync("managedIdentityResourceId", resourceId, _managedIdentityResourceIds.GetOrAdd(resourceId, _ => new ManagedIdentityCredential(resourceId)));
 
-        public TokenCredential GetClientSecretCredential(string tenantId, string clientId, string clientSecret)
-        {
-            PushCredentialType("clientId", clientId);
-            return _clientSecretsIdentities.GetOrAdd($"{tenantId}_{clientId}_{clientSecret}", _ => new ClientSecretCredential(tenantId, clientId, clientSecret));
-        }
+        public Task<TokenCredential> GetClientSecretCredentialAsync(string tenantId, string clientId, string clientSecret)
+            => PushCredentialTypeAsync("clientId", clientId,
+                _clientSecretsIdentities.GetOrAdd($"{tenantId}_{clientId}_{clientSecret}", _ => new ClientSecretCredential(tenantId, clientId, clientSecret)));
     }
 
     public class AzureCredentialInfo
