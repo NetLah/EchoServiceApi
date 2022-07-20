@@ -36,7 +36,7 @@ try
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddScoped<HttpContextInfo>();
 
-    builder.Services.AddScoped<DisagnosticInfo>();
+    builder.Services.AddScoped<DiagnosticInfo>();
 
     builder.Services.AddHttpOverrides(builder.Configuration);
 

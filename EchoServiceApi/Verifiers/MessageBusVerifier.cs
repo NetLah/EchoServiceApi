@@ -3,36 +3,48 @@ using NetLah.Extensions.Configuration;
 
 namespace EchoServiceApi.Verifiers
 {
-    public class MessageBusVerifierInfo1
+    public class MessageBusVerifierQueueName
     {
         public string? QueueName { get; set; }
     }
 
     public class MessageBusVerifier : BaseVerifier
     {
-        private readonly ILogger _logger;
-
-        public MessageBusVerifier(IServiceProvider serviceProvider, ILogger<MessageBusVerifier> logger)
-            : base(serviceProvider)
-        {
-            _logger = logger;
-        }
+        public MessageBusVerifier(IServiceProvider serviceProvider) : base(serviceProvider) { }
 
         public async Task<VerifyResult> VerifyAsync(string name, bool send, bool receive, string? queueName)
         {
             var connectionObj = GetConnection(name);
 
-            if (string.IsNullOrEmpty(queueName))
+            IDisposable? scope = null;
+
+            var serviceBusFqns = connectionObj.GetServiceBusFqns();
+            ServiceBusClient client;
+
+            if (serviceBusFqns == null)
             {
-                queueName = connectionObj.Get<MessageBusVerifierInfo1>().QueueName ?? throw new Exception("QueueName is required");
+                if (string.IsNullOrEmpty(queueName))
+                {
+                    queueName = connectionObj.Get<MessageBusVerifierQueueName>().QueueName ?? throw new Exception("QueueName is required");
+                }
+                client = new ServiceBusClient(connectionString: connectionObj.Value);
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(queueName))
+                {
+                    queueName = serviceBusFqns.QueueName ?? throw new Exception("QueueName is required");
+                }
+                var tokenCredential = await TokenFactory.GetTokenCredentialOrDefaultAsync(serviceBusFqns);
+                client = new ServiceBusClient(serviceBusFqns.Fqns, tokenCredential);
+                scope = LoggerBeginScopeDiagnostic();
             }
 
-            _logger.LogInformation("MessageBusVerifier: name={query_name} send={query_send} receive={query_receive} queueName={query_queueName}",
+            Logger.LogInformation("MessageBusVerifier: name={query_name} send={query_send} receive={query_receive} queueName={query_queueName}",
                 name, send, receive, queueName);
 
             ServiceBusSender? sender = null;
             ServiceBusReceiver? receiver = null;
-            var client = new ServiceBusClient(connectionString: connectionObj.Value);
             try
             {
                 sender = client.CreateSender(queueName);
@@ -67,8 +79,9 @@ namespace EchoServiceApi.Verifiers
                 if (sender != null)
                     await sender.DisposeAsync();
 
-                if (client != null)
-                    await client.DisposeAsync();
+                await client.DisposeAsync();
+
+                scope?.Dispose();
             }
         }
     }

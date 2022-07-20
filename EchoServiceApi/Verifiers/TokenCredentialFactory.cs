@@ -28,7 +28,7 @@ namespace EchoServiceApi.Verifiers
             return result;
         }
 
-        public async Task<TokenCredential> GetDefaultTokenCredentialAsync()
+        private async Task<TokenCredential> GetDefaultTokenCredentialAsync()
         {
             var azureCredentialConfig = _configuration.GetSection("Azure");
             var azureCredentialOptions = azureCredentialConfig.Get<AzureCredentialInfo?>();
@@ -94,8 +94,7 @@ namespace EchoServiceApi.Verifiers
             if (_httpContextAccessor.HttpContext is { } httpContext &&
                 httpContext.Response is { } response)
             {
-                var myInfos = httpContext.RequestServices.GetRequiredService<DisagnosticInfo>();
-                var state = myInfos.LoggingScopeState;
+                var state = httpContext.RequestServices.GetRequiredService<DiagnosticInfo>().LoggingScopeState;
                 state["credential_type"] = credentialType;
 
                 if (credentialType != "default" || value != null)

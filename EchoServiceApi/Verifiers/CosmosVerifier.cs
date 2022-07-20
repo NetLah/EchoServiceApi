@@ -6,12 +6,7 @@ namespace EchoServiceApi.Verifiers
 {
     public class CosmosVerifier : BaseCosmosVerifier
     {
-        private readonly ILogger _logger;
-
-        public CosmosVerifier(IServiceProvider serviceProvider, ILogger<CosmosVerifier> logger) : base(serviceProvider)
-        {
-            _logger = logger;
-        }
+        public CosmosVerifier(IServiceProvider serviceProvider) : base(serviceProvider) { }
 
         public async Task<VerifyResult> VerifyAsync(string name, string key)
         {
@@ -26,7 +21,9 @@ namespace EchoServiceApi.Verifiers
 
             using var cosmosclient = await CreateClientAsync(connectionObj, cosmosInfo);
 
-            _logger.LogInformation("CosmosVerifier db:{databaseName} container:{containerName} name={query_name} key={query_key}",
+            using var scope = LoggerBeginScopeDiagnostic();
+
+            Logger.LogInformation("CosmosVerifier db:{databaseName} container:{containerName} name={query_name} key={query_key}",
                 databaseName, containerName, name, key);
 
             var container = cosmosclient.GetContainer(databaseName, containerName);

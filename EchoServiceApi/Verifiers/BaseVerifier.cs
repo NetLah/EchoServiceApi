@@ -6,6 +6,8 @@ public abstract class BaseVerifier
 {
     private IConfiguration? _configuration;
     private TokenCredentialFactory? _tokenCredentialFactory;
+    private ILogger? _logger;
+    private DiagnosticInfo? _diagnosticInfo;
 
     protected BaseVerifier(IServiceProvider serviceProvider)
     {
@@ -18,6 +20,10 @@ public abstract class BaseVerifier
 
     public IServiceProvider ServiceProvider { get; }
 
+    public ILogger Logger => _logger ??= ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger(GetType());
+
+    public DiagnosticInfo DiagnosticInfo => _diagnosticInfo ??= ServiceProvider.GetRequiredService<DiagnosticInfo>();
+
     protected ProviderConnectionString GetConnection(string name)
     {
         if (string.IsNullOrEmpty(name))
@@ -27,4 +33,6 @@ public abstract class BaseVerifier
         var connectionObj = connectionStringManager[name] ?? throw new Exception($"Connection string '{name}' not found");
         return connectionObj;
     }
+
+    protected IDisposable LoggerBeginScopeDiagnostic() => Logger.BeginScope(DiagnosticInfo.LoggingScopeState);
 }

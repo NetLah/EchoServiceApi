@@ -2,13 +2,7 @@
 {
     public class DirVerifier : BaseVerifier
     {
-        private readonly ILogger _logger;
-
-        public DirVerifier(IServiceProvider serviceProvider, ILogger<DirVerifier> logger)
-            : base(serviceProvider)
-        {
-            _logger = logger;
-        }
+        public DirVerifier(IServiceProvider serviceProvider) : base(serviceProvider) { }
 
         public Task<VerifyResult> VerifyAsync(string path)
         {
@@ -24,7 +18,7 @@
 
             if (isFile)
             {
-                _logger.LogInformation("DirVerifier: File: path={query_path}", path);
+                Logger.LogInformation("DirVerifier: File: path={query_path}", path);
 
                 var fileInfo = new FileInfo(path);
                 var detail = $"length={fileInfo.Length}; created={fileInfo.CreationTime}; updated={fileInfo.LastWriteTime}";
@@ -36,7 +30,7 @@
             }
             else if (isDir)
             {
-                _logger.LogInformation("DirVerifier: Directory: path={path}", path);
+                Logger.LogInformation("DirVerifier: Directory: path={path}", path);
 
                 var path1 = Path.GetFullPath(path);
                 var dirInfo = new DirectoryInfo(path1);

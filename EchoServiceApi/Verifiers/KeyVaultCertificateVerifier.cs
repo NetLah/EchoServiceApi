@@ -6,13 +6,7 @@ namespace EchoServiceApi.Verifiers
 {
     public class KeyVaultCertificateVerifier : BaseVerifier
     {
-        private readonly ILogger _logger;
-
-        public KeyVaultCertificateVerifier(IServiceProvider serviceProvider, ILogger<KeyVaultCertificateVerifier> logger)
-            : base(serviceProvider)
-        {
-            _logger = logger;
-        }
+        public KeyVaultCertificateVerifier(IServiceProvider serviceProvider) : base(serviceProvider) { }
 
         public async Task<VerifyResult> VerifyAsync(string name, bool privateKey)
         {
@@ -27,7 +21,9 @@ namespace EchoServiceApi.Verifiers
             X509Certificate2? cert = null;
             Func<X509Certificate2?, string> factory = cert => $"Subject={cert?.Subject}; Expires={cert?.GetExpirationDateString()}; HasPrivateKey={privateKey}";
 
-            _logger.LogInformation("KeyVaultCertificateVerifier: name={query_name} privateKey={query_privateKey}", name, privateKey);
+            using var scope = LoggerBeginScopeDiagnostic();
+
+            Logger.LogInformation("KeyVaultCertificateVerifier: name={query_name} privateKey={query_privateKey}", name, privateKey);
 
             if (locationParts.Length >= 3 && "certificates" == locationParts[1])
             {

@@ -12,13 +12,7 @@ namespace EchoServiceApi.Verifiers
 
     public class CosmosCacheVerifier : BaseCosmosVerifier
     {
-        private readonly ILogger _logger;
-
-        public CosmosCacheVerifier(IServiceProvider serviceProvider, ILogger<CosmosCacheVerifier> logger)
-            : base(serviceProvider)
-        {
-            _logger = logger;
-        }
+        public CosmosCacheVerifier(IServiceProvider serviceProvider) : base(serviceProvider) { }
 
         public async Task<VerifyResult> VerifyAsync(string name)
         {
@@ -30,7 +24,9 @@ namespace EchoServiceApi.Verifiers
 
             using var cosmosclient = await CreateClientAsync(connectionObj, cosmosCacheInfo);
 
-            _logger.LogInformation("CosmosCacheVerifier db:{databaseName} container:{containerName} name={query_name}",
+            using var scope = LoggerBeginScopeDiagnostic();
+
+            Logger.LogInformation("CosmosCacheVerifier db:{databaseName} container:{containerName} name={query_name}",
                 databaseName, containerName, name);
 
             var cosmosCacheOptions = new CosmosCacheOptions
