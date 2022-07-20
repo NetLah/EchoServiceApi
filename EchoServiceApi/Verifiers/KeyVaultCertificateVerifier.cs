@@ -17,9 +17,10 @@ namespace EchoServiceApi.Verifiers
         public async Task<VerifyResult> VerifyAsync(string name, bool privateKey)
         {
             var connectionObj = GetConnection(name);
-            var vaultUri = new Uri(connectionObj.Value);
 
-            var tokenCredential = await TokenFactory.GetTokenCredentialAsync();
+            var connectionCredentialValue = connectionObj.TryGet<ConnectionCredentialValue>();
+            var tokenCredential = await TokenFactory.GetTokenCredentialOrDefaultAsync(connectionCredentialValue);
+            var vaultUri = new Uri(connectionCredentialValue.Value ?? throw new NullReferenceException("value is required"));
 
             var certificateIdentifier = new Uri(vaultUri, "/");
             var locationParts = vaultUri.LocalPath.Split('/');

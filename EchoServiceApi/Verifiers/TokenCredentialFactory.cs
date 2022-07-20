@@ -23,32 +23,44 @@ namespace EchoServiceApi.Verifiers
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public Task<TokenCredential> GetTokenCredentialAsync()
+        public async Task<TokenCredential> GetTokenCredentialOrDefaultAsync(AzureCredentialInfo? options = null)
         {
-            var azure = _configuration.GetSection("Azure");
+            var result = options == null ? null : await GetTokenCredentialAsync(options);
+            result ??= await GetDefaultTokenCredentialAsync();
+            return result;
+        }
 
-            var options = azure.Get<AzureCredentialInfo?>();
+        public async Task<TokenCredential> GetDefaultTokenCredentialAsync()
+        {
+            var azureCredentialConfig = _configuration.GetSection("Azure");
+            var azureCredentialOptions = azureCredentialConfig.Get<AzureCredentialInfo?>();
+            var result = await GetTokenCredentialAsync(azureCredentialOptions) ?? await GetDefaultAzureCredentialAsync();
+            return result;
+        }
+
+        public async Task<TokenCredential?> GetTokenCredentialAsync(AzureCredentialInfo? options)
+        {
             if (options != null)
             {
                 if (options.ManagedIdentityClientId is { } managedIdentityClientId)
                 {
-                    return GetManagedIdentityClientIdAsync(managedIdentityClientId);
+                    return await GetManagedIdentityClientIdAsync(managedIdentityClientId);
                 }
 
                 if (options.ManagedIdentityResourceId is { } managedIdentityResourceId)
                 {
-                    return GetManagedIdentityResourceIdAsync(managedIdentityResourceId);
+                    return await GetManagedIdentityResourceIdAsync(managedIdentityResourceId);
                 }
 
                 if (options.TenantId is { } tenantId &&
                     options.ClientId is { } clientId &&
                     options.ClientSecret is { } clientSecret)
                 {
-                    return GetClientSecretCredentialAsync(tenantId, clientId, clientSecret);
+                    return await GetClientSecretCredentialAsync(tenantId, clientId, clientSecret);
                 }
             }
 
-            return GetDefaultAzureCredentialAsync();
+            return null;
         }
 
         public string? Redact(string? secret)
@@ -105,23 +117,23 @@ namespace EchoServiceApi.Verifiers
             }
         }
 
-        public async Task<TokenCredential> GetDefaultAzureCredentialAsync()
+        private async Task<TokenCredential> GetDefaultAzureCredentialAsync()
             => (await PushCredentialTypeAsync("default", null, _lazyDefault.Value)).TokenCredential;
 
-        public async Task<TokenCredential> GetManagedIdentityClientIdAsync(string managedIdentityClientId)
+        private async Task<TokenCredential> GetManagedIdentityClientIdAsync(string managedIdentityClientId)
             => (await PushCredentialTypeAsync("managedIdentityClientId", managedIdentityClientId,
                 _managedIdentityClientIds.GetOrAdd(managedIdentityClientId,
                     _ => new TokenCredentialWrapper(new ManagedIdentityCredential(managedIdentityClientId), $"managedIdentityClientId={managedIdentityClientId}")))).TokenCredential;
 
-        public Task<TokenCredential> GetManagedIdentityResourceIdAsync(string managedIdentityResourceId) =>
+        private Task<TokenCredential> GetManagedIdentityResourceIdAsync(string managedIdentityResourceId) =>
             GetManagedIdentityResourceIdAsync(new ResourceIdentifier(managedIdentityResourceId));
 
-        public async Task<TokenCredential> GetManagedIdentityResourceIdAsync(ResourceIdentifier resourceId)
+        private async Task<TokenCredential> GetManagedIdentityResourceIdAsync(ResourceIdentifier resourceId)
             => (await PushCredentialTypeAsync("managedIdentityResourceId", resourceId,
                 _managedIdentityResourceIds.GetOrAdd(resourceId,
                     _ => new TokenCredentialWrapper(new ManagedIdentityCredential(resourceId), $"resourceId={resourceId}")))).TokenCredential;
 
-        public async Task<TokenCredential> GetClientSecretCredentialAsync(string tenantId, string clientId, string clientSecret)
+        private async Task<TokenCredential> GetClientSecretCredentialAsync(string tenantId, string clientId, string clientSecret)
             => (await PushCredentialTypeAsync("clientId", clientId,
                 _clientSecretsIdentities.GetOrAdd($"{tenantId}_{clientId}_{clientSecret}",
                     _ => new TokenCredentialWrapper(new ClientSecretCredential(tenantId, clientId, clientSecret), $"clientId={clientId}/tenantId={tenantId}")))).TokenCredential;
@@ -138,10 +150,10 @@ namespace EchoServiceApi.Verifiers
 
     public class TokenCredentialWrapper
     {
-        public TokenCredentialWrapper(TokenCredential tokenCredential, string myInfo = null)
+        public TokenCredentialWrapper(TokenCredential tokenCredential, string? credentialInfo = null)
         {
             TokenCredential = tokenCredential;
-            CredentialInfo = myInfo;
+            CredentialInfo = credentialInfo;
         }
 
         public TokenCredential TokenCredential { get; }
