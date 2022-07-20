@@ -68,7 +68,7 @@ namespace EchoServiceApi.Verifiers
                     return VerifyResult.Successed("MessageBus", connectionObj, detail1);
                 }
 
-                var detail = $"queueName={queueName}; fqn={sender.FullyQualifiedNamespace};";
+                var detail = $"queueName={queueName}; fqns={sender.FullyQualifiedNamespace};";
                 return VerifyResult.Successed("MessageBus", connectionObj, detail);
             }
             finally
