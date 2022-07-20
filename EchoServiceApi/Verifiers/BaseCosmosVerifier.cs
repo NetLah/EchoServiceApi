@@ -21,7 +21,7 @@ public abstract class BaseCosmosVerifier : BaseVerifier
         var accountEndpoint = cosmosInfo.AccountEndpoint;
 
         var tokenCredential = await TokenFactory.GetTokenCredentialAsync(cosmosInfo);
-        if (tokenCredential == null)
+        if (tokenCredential != null)
         {
             return new CosmosClient(accountEndpoint, tokenCredential, cosmosClientOptions);
         }
