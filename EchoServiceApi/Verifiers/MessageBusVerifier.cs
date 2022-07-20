@@ -64,7 +64,7 @@ namespace EchoServiceApi.Verifiers
                 {
                     await sender.SendMessageAsync(new ServiceBusMessage($"{queueName}-{DateTimeOffset.Now}"));
 
-                    var detail1 = $"Status=Sent; queueName={queueName}; fqn={sender.FullyQualifiedNamespace};";
+                    var detail1 = $"Status=Sent; queueName={queueName}; fqns={sender.FullyQualifiedNamespace};";
                     return VerifyResult.Successed("MessageBus", connectionObj, detail1);
                 }
 
