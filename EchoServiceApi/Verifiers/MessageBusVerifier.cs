@@ -3,7 +3,7 @@ using NetLah.Extensions.Configuration;
 
 namespace EchoServiceApi.Verifiers
 {
-    public class MessageBusVerifierInfo1
+    public class MessageBusVerifierQueueName
     {
         public string? QueueName { get; set; }
     }
@@ -16,14 +16,35 @@ namespace EchoServiceApi.Verifiers
         {
             var connectionObj = GetConnection(name);
 
-            if (string.IsNullOrEmpty(queueName))
+            IDisposable? scope = null;
+
+            var serviceBusFqns = connectionObj.GetServiceBusFqns();
+            ServiceBusClient client;
+
+            if (serviceBusFqns == null)
             {
-                queueName = connectionObj.Get<MessageBusVerifierInfo1>().QueueName ?? throw new Exception("QueueName is required");
+                if (string.IsNullOrEmpty(queueName))
+                {
+                    queueName = connectionObj.Get<MessageBusVerifierQueueName>().QueueName ?? throw new Exception("QueueName is required");
+                }
+                client = new ServiceBusClient(connectionString: connectionObj.Value);
             }
+            else
+            {
+                if (string.IsNullOrEmpty(queueName))
+                {
+                    queueName = serviceBusFqns.QueueName ?? throw new Exception("QueueName is required");
+                }
+                var tokenCredential = await TokenFactory.GetTokenCredentialOrDefaultAsync(serviceBusFqns);
+                client = new ServiceBusClient(serviceBusFqns.Fqns, tokenCredential);
+                scope = LoggerBeginScopeDiagnostic();
+            }
+
+            Logger.LogInformation("MessageBusVerifier: name={query_name} send={query_send} receive={query_receive} queueName={query_queueName}",
+                name, send, receive, queueName);
 
             ServiceBusSender? sender = null;
             ServiceBusReceiver? receiver = null;
-            var client = new ServiceBusClient(connectionString: connectionObj.Value);
             try
             {
                 sender = client.CreateSender(queueName);
@@ -43,11 +64,11 @@ namespace EchoServiceApi.Verifiers
                 {
                     await sender.SendMessageAsync(new ServiceBusMessage($"{queueName}-{DateTimeOffset.Now}"));
 
-                    var detail1 = $"Status=Sent; queueName={queueName}; fqn={sender.FullyQualifiedNamespace};";
+                    var detail1 = $"Status=Sent; queueName={queueName}; fqns={sender.FullyQualifiedNamespace};";
                     return VerifyResult.Successed("MessageBus", connectionObj, detail1);
                 }
 
-                var detail = $"queueName={queueName}; fqn={sender.FullyQualifiedNamespace};";
+                var detail = $"queueName={queueName}; fqns={sender.FullyQualifiedNamespace};";
                 return VerifyResult.Successed("MessageBus", connectionObj, detail);
             }
             finally
@@ -58,8 +79,9 @@ namespace EchoServiceApi.Verifiers
                 if (sender != null)
                     await sender.DisposeAsync();
 
-                if (client != null)
-                    await client.DisposeAsync();
+                await client.DisposeAsync();
+
+                scope?.Dispose();
             }
         }
     }

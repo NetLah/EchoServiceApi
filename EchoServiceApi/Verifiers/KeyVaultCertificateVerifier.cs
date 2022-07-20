@@ -1,5 +1,4 @@
-﻿using Azure.Identity;
-using Azure.Security.KeyVault.Certificates;
+﻿using Azure.Security.KeyVault.Certificates;
 using Azure.Security.KeyVault.Secrets;
 using System.Security.Cryptography.X509Certificates;
 
@@ -12,14 +11,19 @@ namespace EchoServiceApi.Verifiers
         public async Task<VerifyResult> VerifyAsync(string name, bool privateKey)
         {
             var connectionObj = GetConnection(name);
-            var vaultUri = new Uri(connectionObj.Value);
 
-            var tokenCredential = TokenFactory.GetTokenCredential();
+            var connectionCredentialValue = connectionObj.TryGet<ConnectionCredentialValue>();
+            var tokenCredential = await TokenFactory.GetTokenCredentialOrDefaultAsync(connectionCredentialValue);
+            var vaultUri = new Uri(connectionCredentialValue.Value ?? throw new NullReferenceException("value is required"));
 
             var certificateIdentifier = new Uri(vaultUri, "/");
             var locationParts = vaultUri.LocalPath.Split('/');
             X509Certificate2? cert = null;
             Func<X509Certificate2?, string> factory = cert => $"Subject={cert?.Subject}; Expires={cert?.GetExpirationDateString()}; HasPrivateKey={privateKey}";
+
+            using var scope = LoggerBeginScopeDiagnostic();
+
+            Logger.LogInformation("KeyVaultCertificateVerifier: name={query_name} privateKey={query_privateKey}", name, privateKey);
 
             if (locationParts.Length >= 3 && "certificates" == locationParts[1])
             {

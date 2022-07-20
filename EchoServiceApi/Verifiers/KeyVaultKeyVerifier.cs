@@ -12,9 +12,13 @@ namespace EchoServiceApi.Verifiers
         public async Task<VerifyResult> VerifyAsync(string name)
         {
             var connectionObj = GetConnection(name);
-            var vaultUri = new Uri(connectionObj.Value);
+            var connectionCredentialValue = connectionObj.TryGet<ConnectionCredentialValue>();
+            var tokenCredential = await TokenFactory.GetTokenCredentialOrDefaultAsync(connectionCredentialValue);
+            var vaultUri = new Uri(connectionCredentialValue.Value ?? throw new NullReferenceException("value is required"));
 
-            var tokenCredential = TokenFactory.GetTokenCredential();
+            using var scope = LoggerBeginScopeDiagnostic();
+
+            Logger.LogInformation("KeyVaultKeyVerifier: name={query_name}", name);
 
             var keyIdentifier = new Uri(vaultUri, "/");
             var locationParts = vaultUri.LocalPath.Split('/');

@@ -18,6 +18,8 @@
 
             if (isFile)
             {
+                Logger.LogInformation("DirVerifier: File: path={query_path}", path);
+
                 var fileInfo = new FileInfo(path);
                 var detail = $"length={fileInfo.Length}; created={fileInfo.CreationTime}; updated={fileInfo.LastWriteTime}";
                 return Task.FromResult<VerifyResult>(new VerifySuccessMessage
@@ -28,6 +30,8 @@
             }
             else if (isDir)
             {
+                Logger.LogInformation("DirVerifier: Directory: path={path}", path);
+
                 var path1 = Path.GetFullPath(path);
                 var dirInfo = new DirectoryInfo(path1);
                 var pos = path1.Length + 1;

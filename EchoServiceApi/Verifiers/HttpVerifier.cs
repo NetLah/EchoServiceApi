@@ -20,6 +20,8 @@
                 _httpClient.DefaultRequestHeaders.Host = host;
             }
 
+            Logger.LogInformation("HttpVerifier: url={query_url} host={query_host}", url, host);
+
             var content = await _httpClient.GetStringAsync(url);
             return content;
         }

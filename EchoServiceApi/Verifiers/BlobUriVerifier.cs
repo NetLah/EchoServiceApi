@@ -11,8 +11,12 @@ namespace EchoServiceApi.Verifiers
 
         public async Task<VerifyResult> VerifyAsync(Uri blobUri)
         {
-            var tokenCredential = TokenFactory.GetTokenCredential();
+            var tokenCredential = await TokenFactory.GetTokenCredentialOrDefaultAsync();
             var blobClient = new BlobClient(blobUri, tokenCredential);
+
+            using var scope = LoggerBeginScopeDiagnostic();
+
+            Logger.LogInformation("BlobUriVerifier: Try access {query_blobUri}", blobUri);
 
             var isExist = (await blobClient.ExistsAsync()).Value;
 

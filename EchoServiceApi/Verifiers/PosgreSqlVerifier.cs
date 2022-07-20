@@ -13,6 +13,9 @@ namespace EchoServiceApi.Verifiers
             var connectionObj = GetConnection(name);
             var connectionString = connectionObj.Value;
             using var connection = new Npgsql.NpgsqlConnection(connectionString);
+
+            Logger.LogInformation("PosgreSqlVerifier: name={query_name} tableName={query_tableName}", name, tableName);
+
             await connection.OpenAsync();
             using var command = connection.CreateCommand();
             var query = command.CommandText = "SELECT 1 FROM " + tableName;
