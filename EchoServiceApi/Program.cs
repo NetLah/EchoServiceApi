@@ -54,6 +54,7 @@ try
     }
     else
     {
+        // author: this in diagnostics tool for both HTTP and HTTPS, so DO NOT enable `app.UseHsts()` by mistake
         // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
         // app.UseHsts()
     }
