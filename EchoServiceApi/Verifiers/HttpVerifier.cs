@@ -1,29 +1,28 @@
-﻿namespace EchoServiceApi.Verifiers
+﻿namespace EchoServiceApi.Verifiers;
+
+public class HttpVerifier : BaseVerifier
 {
-    public class HttpVerifier : BaseVerifier
+    private readonly HttpClient _httpClient;
+
+    public HttpVerifier(HttpClient httpClient, IServiceProvider serviceProvider)
+        : base(serviceProvider)
     {
-        private readonly HttpClient _httpClient;
+        _httpClient = httpClient;
+    }
 
-        public HttpVerifier(HttpClient httpClient, IServiceProvider serviceProvider)
-            : base(serviceProvider)
+    public async Task<string> VerifyAsync(Uri url, string? host)
+    {
+        if (url == null)
+            throw new ArgumentException("Url is required");
+
+        if (!string.IsNullOrEmpty(host))
         {
-            _httpClient = httpClient;
+            _httpClient.DefaultRequestHeaders.Host = host;
         }
 
-        public async Task<string> VerifyAsync(Uri url, string? host)
-        {
-            if (url == null)
-                throw new ArgumentException("Url is required");
+        Logger.LogInformation("HttpVerifier: url={query_url} host={query_host}", url, host);
 
-            if (!string.IsNullOrEmpty(host))
-            {
-                _httpClient.DefaultRequestHeaders.Host = host;
-            }
-
-            Logger.LogInformation("HttpVerifier: url={query_url} host={query_host}", url, host);
-
-            var content = await _httpClient.GetStringAsync(url);
-            return content;
-        }
+        var content = await _httpClient.GetStringAsync(url);
+        return content;
     }
 }

@@ -30,7 +30,7 @@ try
     builder.Services.AddScoped<KeyVaultKeyVerifier>();
     builder.Services.AddScoped<BlobUriVerifier>();
     builder.Services.AddScoped<DirVerifier>();
-    builder.Services.AddScoped<MessageBusVerifier>();
+    builder.Services.AddScoped<ServiceBusVerifier>();
     builder.Services.AddHttpClient<HttpVerifier>();
 
     builder.Services.AddHttpContextAccessor();

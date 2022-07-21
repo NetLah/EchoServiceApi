@@ -128,11 +128,11 @@ namespace EchoServiceApi.Controllers
             }
         }
 
-        public async Task<IActionResult> MessageBusAsync([FromServices] MessageBusVerifier messageBusVerifier, string name, bool send, bool receive, string? queueName)
+        public async Task<IActionResult> ServiceBusAsync([FromServices] ServiceBusVerifier serviceBusVerifier, string name, bool send, bool receive, string? queueName)
         {
             try
             {
-                var result = await messageBusVerifier.VerifyAsync(name, send, receive, queueName);
+                var result = await serviceBusVerifier.VerifyAsync(name, send, receive, queueName);
                 return Ok(result);
             }
             catch (Exception ex)

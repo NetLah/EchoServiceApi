@@ -13,7 +13,7 @@ public class CosmosContainerInfo : AzureCredentialInfo
 
 public abstract class BaseCosmosVerifier : BaseVerifier
 {
-    public BaseCosmosVerifier(IServiceProvider serviceProvider) : base(serviceProvider) { }
+    protected BaseCosmosVerifier(IServiceProvider serviceProvider) : base(serviceProvider) { }
 
     protected async Task<CosmosClient> CreateClientAsync(ProviderConnectionString providerConnectionString, CosmosContainerInfo cosmosInfo)
     {
