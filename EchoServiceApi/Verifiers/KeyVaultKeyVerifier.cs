@@ -12,6 +12,7 @@ public class KeyVaultKeyVerifier : BaseVerifier
     public async Task<VerifyResult> VerifyAsync(string name)
     {
         var connectionObj = GetConnection(name);
+
         var connectionCredentialValue = connectionObj.TryGet<ConnectionCredentialValue>();
         var tokenCredential = await TokenFactory.GetTokenCredentialOrDefaultAsync(connectionCredentialValue);
         var vaultUri = new Uri(connectionCredentialValue.Value ?? throw new NullReferenceException("value is required"));

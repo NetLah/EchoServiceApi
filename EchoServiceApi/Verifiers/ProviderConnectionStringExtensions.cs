@@ -30,7 +30,7 @@ internal static class ProviderConnectionStringExtensions
     {
         try
         {
-            var options = new DbConnectionStringBuilder { ConnectionString = connectionString.Value };
+            _ = new DbConnectionStringBuilder { ConnectionString = connectionString.Value };
         }
         catch
         {
@@ -51,7 +51,7 @@ internal static class ProviderConnectionStringExtensions
     {
         try
         {
-            var options = new DbConnectionStringBuilder { ConnectionString = connectionString.Value };
+            _ = new DbConnectionStringBuilder { ConnectionString = connectionString.Value };
         }
         catch
         {
