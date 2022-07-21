@@ -61,7 +61,7 @@ try
     // app.UseSerilogRequestLoggingLevel(LogLevel.Information)
     Serilog.SerilogApplicationBuilderExtensions.UseSerilogRequestLogging(app, delegate (RequestLoggingOptions opt)
     {
-        opt.GetLevel = ((HttpContext c, double d, Exception e) => (!(c.Response.StatusCode >= 500) && e == null) ? LogEventLevel.Information : LogEventLevel.Error);
+        opt.GetLevel = ((HttpContext c, double d, Exception e) => (c.Response.StatusCode < 500 && e == null) ? LogEventLevel.Information : LogEventLevel.Error);
     });
 
     app.UseHealthChecks("/healthz");
