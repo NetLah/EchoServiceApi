@@ -7,7 +7,7 @@ namespace EchoServiceApi.Controllers
     [ApiController]
     public class DiagnosticsController : ControllerBase
     {
-        public IActionResult Connection([FromServices] HttpContextInfo httpContextInfo)
+        public IActionResult Connection([FromServices] HttpContextInfo httpContextInfo, string? endpoint)
         {
             try
             {
@@ -18,7 +18,8 @@ namespace EchoServiceApi.Controllers
                 {
                     remoteIpAddress = $"[{remoteIpAddress}]";
                 }
-                var connectionInfo = $"Server:{request.Scheme}://{httpContextInfo.Host}:{httpContextInfo.Port} Client:{remoteIpAddress}:{remote?.RemotePort}";
+                var endpointInfo = string.IsNullOrEmpty(endpoint) ? null : $"[{endpoint}]";
+                var connectionInfo = $"Server{endpointInfo}:{request.Scheme}://{httpContextInfo.Host}:{httpContextInfo.Port} Client:{remoteIpAddress}:{remote?.RemotePort}";
                 return Ok(connectionInfo);
             }
             catch (Exception ex)
@@ -26,6 +27,11 @@ namespace EchoServiceApi.Controllers
                 return Ok(VerifyResult.Failed(ex));
             }
         }
+
+        // Add multi connections query
+        public IActionResult Connection1([FromServices] HttpContextInfo httpContextInfo) => Connection(httpContextInfo, "Connection1");
+        public IActionResult Connection2([FromServices] HttpContextInfo httpContextInfo) => Connection(httpContextInfo, "Connection2");
+        public IActionResult Connection3([FromServices] HttpContextInfo httpContextInfo) => Connection(httpContextInfo, "Connection3");
 
         public async Task<IActionResult> CosmosCacheAsync([FromServices] CosmosCacheVerifier cosmosVerifier, string name)
         {
