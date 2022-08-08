@@ -7,6 +7,18 @@ namespace EchoServiceApi.Controllers
     [ApiController]
     public class DiagnosticsController : ControllerBase
     {
+        public IActionResult GetInfo([FromServices] NetLah.Diagnostics.IAssemblyInfo appInfo)
+        {
+            try
+            {
+                return Ok($"AppTitle:{appInfo.Title}; Version:{appInfo.InformationalVersion} BuildTime:{appInfo.BuildTimestampLocal}; Framework:{appInfo.FrameworkName}; TimeZoneInfo.Local:{TimeZoneInfo.Local.DisplayName} / {TimeZoneInfo.Local.BaseUtcOffset}");
+            }
+            catch (Exception ex)
+            {
+                return Ok(VerifyResult.Failed(ex));
+            }
+        }
+
         public IActionResult Connection([FromServices] HttpContextInfo httpContextInfo, string? endpoint)
         {
             try

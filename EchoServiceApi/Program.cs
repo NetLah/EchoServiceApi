@@ -11,6 +11,7 @@ try
 {
     var appInfo = ApplicationInfo.Initialize(null);
     var builder = WebApplication.CreateBuilder(args);
+    builder.Services.AddSingleton<IAssemblyInfo>(appInfo);
 
     builder.UseSerilog(logger => LogAppEvent(logger, "Application initializing...", appInfo));
     var logger = AppLog.Logger;
