@@ -4,7 +4,6 @@ using Microsoft.Extensions.Primitives;
 namespace EchoServiceApi.Controllers;
 
 [Route("e")]
-[ApiController]
 public class EchoController : ControllerBase
 {
     [Route("400")]
@@ -36,6 +35,7 @@ public class EchoController : ControllerBase
     };
 
     [Route("{*url}")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public async Task<ActionResult<MyResult>> Action(string url)
     {
         var request = HttpContext.Request;

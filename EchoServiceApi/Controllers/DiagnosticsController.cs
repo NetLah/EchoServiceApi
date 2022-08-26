@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace EchoServiceApi.Controllers
 {
     [Route("[controller]/[action]")]
-    [ApiController]
     public class DiagnosticsController : ControllerBase
     {
         public IActionResult GetInfo([FromServices] NetLah.Diagnostics.IAssemblyInfo appInfo)
