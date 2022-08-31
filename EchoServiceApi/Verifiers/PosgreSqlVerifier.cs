@@ -1,29 +1,28 @@
 ﻿#pragma warning disable S4457 // Parameter validation in "async"/"await" methods should be wrapped
-namespace EchoServiceApi.Verifiers
+namespace EchoServiceApi.Verifiers;
+
+public class PosgreSqlVerifier : BaseVerifier
 {
-    public class PosgreSqlVerifier : BaseVerifier
+    public PosgreSqlVerifier(IServiceProvider serviceProvider) : base(serviceProvider) { }
+
+    public async Task<VerifyResult> VerifyAsync(string name, string tableName)
     {
-        public PosgreSqlVerifier(IServiceProvider serviceProvider) : base(serviceProvider) { }
+        if (string.IsNullOrEmpty(tableName))
+            throw new ArgumentNullException(nameof(tableName));
 
-        public async Task<VerifyResult> VerifyAsync(string name, string tableName)
-        {
-            if (string.IsNullOrEmpty(tableName))
-                throw new ArgumentNullException(nameof(tableName));
+        var connectionObj = GetConnection(name);
+        var connectionString = connectionObj.Value;
+        using var connection = new Npgsql.NpgsqlConnection(connectionString);
 
-            var connectionObj = GetConnection(name);
-            var connectionString = connectionObj.Value;
-            using var connection = new Npgsql.NpgsqlConnection(connectionString);
+        Logger.LogInformation("PosgreSqlVerifier: name={query_name} tableName={query_tableName}", name, tableName);
 
-            Logger.LogInformation("PosgreSqlVerifier: name={query_name} tableName={query_tableName}", name, tableName);
+        await connection.OpenAsync();
+        using var command = connection.CreateCommand();
+        var query = command.CommandText = "SELECT 1 FROM " + tableName;
+        command.CommandType = System.Data.CommandType.Text;
+        command.ExecuteNonQuery();
 
-            await connection.OpenAsync();
-            using var command = connection.CreateCommand();
-            var query = command.CommandText = "SELECT 1 FROM " + tableName;
-            command.CommandType = System.Data.CommandType.Text;
-            command.ExecuteNonQuery();
-
-            return VerifyResult.Successed("PosgreSql", connectionObj, detail: query);
-        }
+        return VerifyResult.Successed("PosgreSql", connectionObj, detail: query);
     }
 }
 #pragma warning restore S4457 // Parameter validation in "async"/"await" methods should be wrapped

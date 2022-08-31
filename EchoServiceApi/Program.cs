@@ -1,6 +1,7 @@
 ﻿using EchoServiceApi;
 using EchoServiceApi.Verifiers;
 using NetLah.Diagnostics;
+using NetLah.Extensions.HttpOverrides;
 using NetLah.Extensions.Logging;
 using Serilog.AspNetCore;
 using Serilog.Events;
@@ -11,6 +12,7 @@ try
 {
     var appInfo = ApplicationInfo.Initialize(null);
     var builder = WebApplication.CreateBuilder(args);
+    builder.Services.AddSingleton<IAssemblyInfo>(appInfo);
 
     builder.UseSerilog(logger => LogAppEvent(logger, "Application initializing...", appInfo));
     var logger = AppLog.Logger;
@@ -30,7 +32,7 @@ try
     builder.Services.AddScoped<KeyVaultKeyVerifier>();
     builder.Services.AddScoped<BlobUriVerifier>();
     builder.Services.AddScoped<DirVerifier>();
-    builder.Services.AddScoped<MessageBusVerifier>();
+    builder.Services.AddScoped<ServiceBusVerifier>();
     builder.Services.AddHttpClient<HttpVerifier>();
 
     builder.Services.AddHttpContextAccessor();
@@ -54,6 +56,7 @@ try
     }
     else
     {
+        // author: this in diagnostics tool for both HTTP and HTTPS, so DO NOT enable `app.UseHsts()` by mistake
         // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
         // app.UseHsts()
     }
@@ -61,7 +64,7 @@ try
     // app.UseSerilogRequestLoggingLevel(LogLevel.Information)
     Serilog.SerilogApplicationBuilderExtensions.UseSerilogRequestLogging(app, delegate (RequestLoggingOptions opt)
     {
-        opt.GetLevel = ((HttpContext c, double d, Exception e) => (!(c.Response.StatusCode >= 500) && e == null) ? LogEventLevel.Information : LogEventLevel.Error);
+        opt.GetLevel = ((HttpContext c, double d, Exception e) => (c.Response.StatusCode < 500 && e == null) ? LogEventLevel.Information : LogEventLevel.Error);
     });
 
     app.UseHealthChecks("/healthz");

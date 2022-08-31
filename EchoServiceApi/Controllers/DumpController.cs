@@ -4,7 +4,6 @@ using NetLah.Extensions.Configuration;
 namespace EchoServiceApi.Controllers;
 
 [Route("[controller]/[action]")]
-[ApiController]
 public class DumpController : ControllerBase
 {
     private static IDictionary<string, string?> GetEnvironmentVariables()
