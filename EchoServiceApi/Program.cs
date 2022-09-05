@@ -46,7 +46,7 @@ try
 
     logger.LogInformation("Environment: {environmentName}; DeveloperMode:{isDevelopment}", app.Environment.EnvironmentName, app.Environment.IsDevelopment());
 
-    app.UseHttpOverrides(logger);
+    app.UseHttpOverrides();
 
 #pragma warning disable S3923 // All branches in a conditional structure should not have exactly the same implementation
     if (app.Environment.IsDevelopment())
