@@ -19,6 +19,8 @@ try
 
     // Add services to the container.
 
+    builder.Services.AddApplicationInsightsTelemetry();
+
     builder.Services.AddControllers();
 
     builder.Services.AddHealthChecks();     // Registers health checks services
