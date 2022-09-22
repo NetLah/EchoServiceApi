@@ -5,7 +5,6 @@ ARG ASPNET_IMAGE=netlah/aspnet-webssh:${ASPNET_IMAGE_TAG}
 FROM ${ASPNET_IMAGE}
 WORKDIR /app
 EXPOSE 80
-RUN apk update && apk add --no-cache ca-certificates tzdata
-ENV TZ=UTC
+RUN apk update && apk add --no-cache ca-certificates
 COPY app .
 ENTRYPOINT ["dotnet", "EchoServiceApi.dll"]

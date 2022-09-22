@@ -4,6 +4,7 @@ ARG ASPNET_IMAGE_TAG=lastest
 ARG ASPNET_IMAGE=netlah/aspnet-webssh:${ASPNET_IMAGE_TAG}
 FROM ${ASPNET_IMAGE} AS base
 WORKDIR /app
+EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS restore
 WORKDIR /src
