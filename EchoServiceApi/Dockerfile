@@ -25,4 +25,5 @@ RUN dotnet publish "EchoServiceApi.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "EchoServiceApi.dll"]
+ENTRYPOINT ["/opt/startup/init_container.sh"]
+CMD ["dotnet", "EchoServiceApi.dll"]
