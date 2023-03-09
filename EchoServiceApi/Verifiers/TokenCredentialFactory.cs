@@ -15,7 +15,9 @@ public class TokenCredentialFactory
     public TokenCredentialFactory(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
     {
         _configuration = configuration;
-        _lazyDefault = new Lazy<TokenCredentialWrapper>(() => new TokenCredentialWrapper(new DefaultAzureCredential(includeInteractiveCredentials: false), "default"));
+        var defaultAzureCredentialOptions = new DefaultAzureCredentialOptions { ExcludeInteractiveBrowserCredential = true };
+        configuration.Bind("DefaultAzureCredentialOptions", defaultAzureCredentialOptions);
+        _lazyDefault = new Lazy<TokenCredentialWrapper>(() => new TokenCredentialWrapper(new DefaultAzureCredential(defaultAzureCredentialOptions), "default"));
         _managedIdentities = new ConcurrentDictionary<string, TokenCredentialWrapper>();
         _clientSecretsIdentities = new ConcurrentDictionary<string, TokenCredentialWrapper>();
         _httpContextAccessor = httpContextAccessor;
@@ -40,15 +42,10 @@ public class TokenCredentialFactory
     {
         if (options != null && options.ClientId is { } clientId)
         {
-            if (options.TenantId is { } tenantId &&
-                options.ClientSecret is { } clientSecret)
-            {
-                return await GetClientSecretCredentialAsync(tenantId, clientId, clientSecret);
-            }
-            else
-            {
-                return await GetManagedIdentityClientIdAsync(clientId);
-            }
+            return options.TenantId is { } tenantId &&
+                options.ClientSecret is { } clientSecret
+                ? await GetClientSecretCredentialAsync(tenantId, clientId, clientSecret)
+                : await GetManagedIdentityClientIdAsync(clientId);
         }
 
         return null;
@@ -57,15 +54,12 @@ public class TokenCredentialFactory
     public string? Redact(string? secret)
     {
         if (string.IsNullOrWhiteSpace(secret))
-            return null;
-
-        secret = secret.Trim();
-        if (secret.Length < 8)
         {
-            return "REDACTED";
+            return null;
         }
 
-        return $"{secret[..6]}-REDACTED";
+        secret = secret.Trim();
+        return secret.Length < 8 ? "REDACTED" : $"{secret[..6]}-REDACTED";
     }
 
     private async Task<TokenCredentialWrapper> PushCredentialTypeAsync(string credentialType, object? value, TokenCredentialWrapper tokenCredential)
@@ -99,7 +93,9 @@ public class TokenCredentialFactory
             state["credential_type"] = credentialType;
 
             if (credentialType != "default" || value != null)
+            {
                 state[$"credential_{credentialType}"] = value;
+            }
 
             if (func != null)
             {
