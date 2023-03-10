@@ -3,8 +3,6 @@ using EchoServiceApi.Verifiers;
 using NetLah.Diagnostics;
 using NetLah.Extensions.HttpOverrides;
 using NetLah.Extensions.Logging;
-using Serilog.AspNetCore;
-using Serilog.Events;
 
 AppLog.InitLogger();
 AppLog.Logger.LogInformation("Application configure...");
@@ -63,11 +61,12 @@ try
         // app.UseHsts()
     }
 
-    // app.UseSerilogRequestLoggingLevel(LogLevel.Information)
-    Serilog.SerilogApplicationBuilderExtensions.UseSerilogRequestLogging(app, delegate (RequestLoggingOptions opt)
-    {
-        opt.GetLevel = ((HttpContext c, double d, Exception e) => (c.Response.StatusCode < 500 && e == null) ? LogEventLevel.Information : LogEventLevel.Error);
-    });
+    app.UseSerilogRequestLoggingLevel(LogLevel.Information);
+
+    ///Serilog.SerilogApplicationBuilderExtensions.UseSerilogRequestLogging(app, delegate (RequestLoggingOptions opt)
+    ///{
+    ///    opt.GetLevel = (HttpContext c, double d, Exception? e) => (c.Response.StatusCode < 500 && e == null) ? LogEventLevel.Information : LogEventLevel.Error;
+    ///});
 
     app.UseHealthChecks("/healthz");
 
