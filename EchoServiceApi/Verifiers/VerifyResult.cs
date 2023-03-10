@@ -1,4 +1,5 @@
-﻿using NetLah.Extensions.Configuration;
+﻿using Microsoft.Azure.Cosmos;
+using NetLah.Extensions.Configuration;
 using System.Text.Json.Serialization;
 
 namespace EchoServiceApi.Verifiers;
@@ -12,12 +13,22 @@ public class VerifyResult
 
     public static VerifyResult Failed(Exception ex)
     {
-        return new VerifyFailed
-        {
-            Success = false,
-            Error = ex.Message,
-            Detail = ex.ToString(),
-        };
+        return ex is CosmosException cosmosException
+            ? new VerifyFailed
+            {
+                Success = false,
+                Error = $"{ex.GetType().FullName}: {cosmosException.Message}",
+                Disagnostics = cosmosException.Diagnostics?.ToString(),
+                StackTrace = cosmosException.StackTrace,
+                DetailError = cosmosException.ToString(),
+            }
+            : (VerifyResult)new VerifyFailed
+            {
+                Success = false,
+                Error = $"{ex.GetType().FullName}: {ex.Message}",
+                StackTrace = ex.StackTrace,
+                DetailError = ex.ToString(),
+            };
     }
 
     public static VerifyResult Successed(string serviceName, ProviderConnectionString connectionObj, string? detail = null)
@@ -44,6 +55,15 @@ public class VerifyFailed : VerifyResult
 {
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? Error { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public object? Disagnostics { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? StackTrace { get; internal set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? DetailError { get; internal set; }
 }
 
 public class VerifySuccessMessage : VerifyResult
