@@ -1,5 +1,6 @@
 ﻿using EchoServiceApi;
 using EchoServiceApi.Verifiers;
+using Microsoft.Extensions.Hosting.WindowsServices;
 using NetLah.Diagnostics;
 using NetLah.Extensions.HttpOverrides;
 using NetLah.Extensions.Logging;
@@ -9,7 +10,21 @@ AppLog.Logger.LogInformation("Application configure...");
 try
 {
     var appInfo = ApplicationInfo.Initialize(null);
-    var builder = WebApplication.CreateBuilder(args);
+
+    // https://github.com/dotnet/runtime/issues/69212
+    // https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/windows-service?view=aspnetcore-6.0&tabs=visual-studio
+    var webApplicationOptions = new WebApplicationOptions
+    {
+        Args = args,
+        ContentRootPath = WindowsServiceHelpers.IsWindowsService()
+            ? AppContext.BaseDirectory
+            : default
+    };
+    var builder = WebApplication.CreateBuilder(webApplicationOptions);
+
+    builder.Host.UseWindowsService();
+    builder.Host.UseSystemd();
+
     builder.Services.AddSingleton<IAssemblyInfo>(appInfo);
 
     builder.UseSerilog(logger => LogAppEvent(logger, "Application initializing...", appInfo));
