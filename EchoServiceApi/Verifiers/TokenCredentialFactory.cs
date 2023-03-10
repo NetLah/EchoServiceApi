@@ -38,18 +38,15 @@ public class TokenCredentialFactory
         return result;
     }
 
-    public async Task<TokenCredential?> GetTokenCredentialAsync(AzureCredentialInfo? options)
-    {
-        if (options != null && options.ClientId is { } clientId)
-        {
-            return options.TenantId is { } tenantId &&
-                options.ClientSecret is { } clientSecret
+    public async Task<TokenCredential?> GetTokenCredentialAsync(AzureCredentialInfo? options) =>
+#pragma warning disable S3358 // Ternary operators should not be nested
+        options != null && options.ClientId is { } clientId
+            ? options.TenantId is { } tenantId 
+                && options.ClientSecret is { } clientSecret
                 ? await GetClientSecretCredentialAsync(tenantId, clientId, clientSecret)
-                : await GetManagedIdentityClientIdAsync(clientId);
-        }
-
-        return null;
-    }
+                : await GetManagedIdentityClientIdAsync(clientId)
+            : null;
+#pragma warning restore S3358 // Ternary operators should not be nested
 
     public string? Redact(string? secret)
     {
@@ -86,8 +83,8 @@ public class TokenCredentialFactory
 
     public async Task PushCredentialTypeAsync(string credentialType, object? value, Func<HttpContext, Dictionary<string, object?>, Task>? func = null)
     {
-        if (_httpContextAccessor.HttpContext is { } httpContext &&
-            httpContext.Response is { } response)
+        if (_httpContextAccessor.HttpContext is { } httpContext
+            && httpContext.Response is { })
         {
             var state = httpContext.RequestServices.GetRequiredService<DiagnosticInfo>().LoggingScopeState;
             state["credential_type"] = credentialType;
