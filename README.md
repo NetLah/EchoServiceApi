@@ -1,6 +1,6 @@
-# ASPNET.Core 6 Echo Service WebApi
+# ASP.NET Core Echo Service WebApi
 
-ASPNET.Core 6 WebApi provide Echo Service Api for troubleshooting and diagnosing during deployment and integration. This is useful tool on detecting deployment (setup environment) and development issue OAuth and OIDC with deployment environment.
+ASP.NET Core WebApi provide Echo Service Api for troubleshooting and diagnosing during deployment and integration. This is useful tool on detecting deployment (setup environment) and development issue OAuth and OIDC with deployment environment.
 
 ## Build Status
 
@@ -23,7 +23,7 @@ docker logs -f echoapi
 docker rm -f echoapi
 ```
 
-### Run ASP.NETCore Echo Service API from command line using dotnet
+### Run ASP.NET Core Echo Service API from command line using dotnet
 
 - Checkout source code from Github
 
