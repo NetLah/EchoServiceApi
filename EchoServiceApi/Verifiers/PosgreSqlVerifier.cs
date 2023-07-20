@@ -1,5 +1,4 @@
-﻿#pragma warning disable S4457 // Parameter validation in "async"/"await" methods should be wrapped
-namespace EchoServiceApi.Verifiers;
+﻿namespace EchoServiceApi.Verifiers;
 
 public class PosgreSqlVerifier : BaseVerifier
 {
@@ -8,7 +7,9 @@ public class PosgreSqlVerifier : BaseVerifier
     public async Task<VerifyResult> VerifyAsync(string name, string tableName)
     {
         if (string.IsNullOrEmpty(tableName))
+        {
             throw new ArgumentNullException(nameof(tableName));
+        }
 
         var connectionObj = GetConnection(name);
         var connectionString = connectionObj.Value;
@@ -22,7 +23,6 @@ public class PosgreSqlVerifier : BaseVerifier
         command.CommandType = System.Data.CommandType.Text;
         command.ExecuteNonQuery();
 
-        return VerifyResult.Successed("PosgreSql", connectionObj, detail: query);
+        return VerifyResult.Succeed("PosgreSql", connectionObj, detail: query);
     }
 }
-#pragma warning restore S4457 // Parameter validation in "async"/"await" methods should be wrapped

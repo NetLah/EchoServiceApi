@@ -38,15 +38,12 @@ public class TokenCredentialFactory
         return result;
     }
 
-    public async Task<TokenCredential?> GetTokenCredentialAsync(AzureCredentialInfo? options) =>
-#pragma warning disable S3358 // Ternary operators should not be nested
-        options != null && options.ClientId is { } clientId
-            ? options.TenantId is { } tenantId 
+    public async Task<TokenCredential?> GetTokenCredentialAsync(AzureCredentialInfo? options) => options != null && options.ClientId is { } clientId
+            ? options.TenantId is { } tenantId
                 && options.ClientSecret is { } clientSecret
                 ? await GetClientSecretCredentialAsync(tenantId, clientId, clientSecret)
                 : await GetManagedIdentityClientIdAsync(clientId)
             : null;
-#pragma warning restore S3358 // Ternary operators should not be nested
 
     public string? Redact(string? secret)
     {

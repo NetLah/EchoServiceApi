@@ -27,12 +27,14 @@ public abstract class BaseVerifier
     protected ProviderConnectionString GetConnection(string name)
     {
         if (string.IsNullOrEmpty(name))
+        {
             throw new ArgumentNullException(nameof(name));
+        }
 
         IConnectionStringManager connectionStringManager = new ConnectionStringManager(Configuration);
         var connectionObj = connectionStringManager[name] ?? throw new Exception($"Connection string '{name}' not found");
         return connectionObj;
     }
 
-    protected IDisposable LoggerBeginScopeDiagnostic() => Logger.BeginScope(DiagnosticInfo.LoggingScopeState);
+    protected IDisposable LoggerBeginScopeDiagnostic() => Logger.BeginScope(DiagnosticInfo.LoggingScopeState) ?? throw new Exception("Logger.BeginScope null");
 }

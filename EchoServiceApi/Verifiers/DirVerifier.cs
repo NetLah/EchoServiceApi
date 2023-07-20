@@ -7,7 +7,9 @@ public class DirVerifier : BaseVerifier
     public Task<VerifyResult> VerifyAsync(string path)
     {
         if (string.IsNullOrEmpty(path))
+        {
             throw new ArgumentException("Path is required");
+        }
 
         var isDir = false;
         var isFile = File.Exists(path);

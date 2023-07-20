@@ -37,12 +37,12 @@ internal static class ProviderConnectionStringExtensions
             return new TConnectionCredentialInfo { Value = connectionString.Value };
         }
 
-        return connectionString.Get<TConnectionCredentialInfo>();
+        return connectionString.Get<TConnectionCredentialInfo>() ?? throw new Exception("ConnectionCredentialValue is required");
     }
 
     public static ConnectionCredentialBag<TValue> Load<TValue>(this ProviderConnectionString connectionString)
     {
-        var result = connectionString.Get<ConnectionCredentialBag<TValue>>();
+        var result = connectionString.Get<ConnectionCredentialBag<TValue>>() ?? throw new Exception("ConnectionCredentialBag is required");
         result.Value = connectionString.Get<TValue>();
         return result;
     }

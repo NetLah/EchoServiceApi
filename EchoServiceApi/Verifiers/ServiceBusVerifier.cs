@@ -25,7 +25,7 @@ public class ServiceBusVerifier : BaseVerifier
         {
             if (string.IsNullOrEmpty(queueName))
             {
-                queueName = connectionObj.Get<ServiceBusVerifierQueueName>().QueueName ?? throw new Exception("QueueName is required");
+                queueName = connectionObj.Get<ServiceBusVerifierQueueName>()?.QueueName ?? throw new Exception("QueueName is required");
             }
             client = new ServiceBusClient(connectionString: connectionObj.Value);
         }
@@ -57,7 +57,7 @@ public class ServiceBusVerifier : BaseVerifier
                     await receiver.CompleteMessageAsync(message);
                 }
                 var detail1 = $"Received={isExist}; queueName={queueName}; fqns={receiver.FullyQualifiedNamespace}; messageId={message?.MessageId}; messageBody={message?.Body.ToString()}";
-                return VerifyResult.Successed("ServiceBus", connectionObj, detail1);
+                return VerifyResult.Succeed("ServiceBus", connectionObj, detail1);
             }
             else if (send)
             {
@@ -65,21 +65,25 @@ public class ServiceBusVerifier : BaseVerifier
                 await sender.SendMessageAsync(new ServiceBusMessage($"{queueName}-{DateTimeOffset.Now}"));
 
                 var detail1 = $"Status=Sent; queueName={queueName}; fqns={sender.FullyQualifiedNamespace};";
-                return VerifyResult.Successed("ServiceBus", connectionObj, detail1);
+                return VerifyResult.Succeed("ServiceBus", connectionObj, detail1);
             }
 
             sender = client.CreateSender(queueName);
             receiver = client.CreateReceiver(queueName);
             var detail = $"queueName={queueName}; fqns={sender.FullyQualifiedNamespace};";
-            return VerifyResult.Successed("ServiceBus", connectionObj, detail);
+            return VerifyResult.Succeed("ServiceBus", connectionObj, detail);
         }
         finally
         {
             if (receiver != null)
+            {
                 await receiver.DisposeAsync();
+            }
 
             if (sender != null)
+            {
                 await sender.DisposeAsync();
+            }
 
             await client.DisposeAsync();
 
