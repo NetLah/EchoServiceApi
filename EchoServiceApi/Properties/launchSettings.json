@@ -2,14 +2,14 @@
   "profiles": {
     "EchoServiceApi": {
       "commandName": "Project",
-      "launchUrl": "weatherforecast",
+      "launchUrl": "",
       "environmentVariables": {
         "ASPNETCORE_FORWARDEDHEADERS_ENABLED": "False",
-        "AZURE_TENANT_ID": "a25d6dd7-e0ab-4c93-8680-f9473be0a843",
-        "AZURE_CLIENT_ID": "042c27da-42d9-4375-9df4-88cfa4f741e7",
-        "AZURE_CLIENT_SECRET": ".3ChCjBcRXM_Nl_m.Asu.257JE_Aaqwx6k",
+        "AZURE_TENANT_ID_1": "c036898d~",
+        "AZURE_CLIENT_ID_1": "b3979846~",
+        "AZURE_CLIENT_SECRET_1": "~.4RsRl~",
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "APPLICATIONINSIGHTS_CONNECTION_STRING-notuse": "InstrumentationKey=3e823f99-c821-4013-9f77-b7dc8e9f7924;IngestionEndpoint=https://southeastasia-1.in.applicationinsights.azure.com/;LiveEndpoint=https://southeastasia.livediagnostics.monitor.azure.com/"
+        "APPLICATIONINSIGHTS_CONNECTION_STRING_1": "InstrumentationKey=5e68c870-~;IngestionEndpoint=https://southeastasia-1.in.applicationinsights.azure.com/;LiveEndpoint=https://southeastasia.livediagnostics.monitor.azure.com/"
       },
       "dotnetRunMessages": "true",
       "applicationUrl": "https://localhost:5001;http://localhost:5000"
