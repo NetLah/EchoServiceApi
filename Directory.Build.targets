@@ -114,6 +114,7 @@
     <PackageReference Update="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.AspNetCore.Mvc.Razor.Extensions" Version="6.*" />
     <PackageReference Update="Microsoft.AspNetCore.Razor.Language" Version="6.*" />
+    <PackageReference Update="Microsoft.Bcl.HashCode" Version="1.*" />
     <PackageReference Update="Microsoft.Build" Version="17.*" />
     <PackageReference Update="Microsoft.Build.Framework" Version="17.*" />
     <PackageReference Update="Microsoft.CSharp" Version="4.7.0" />
