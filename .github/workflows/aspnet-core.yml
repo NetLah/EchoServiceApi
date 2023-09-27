@@ -177,5 +177,5 @@ jobs:
         if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
         shell: pwsh
         run: |
-          $aspnetImageTag80 = if ($Env:RUNNER_OS -eq 'Linux') { '8.0-preview-alpine' } else { '8.0-preview-nanoserver-1809' }
+          $aspnetImageTag80 = if ($Env:RUNNER_OS -eq 'Linux') { '8.0-alpine' } else { '8.0-nanoserver-1809' }
           ./docker-build.ps1 -Context ./artifacts/net8.0 -Squash -Tags "${{ steps.meta80.outputs.tags }}" -Labels "${{ steps.meta80.outputs.labels }}" -BuildArgs "ASPNET_IMAGE_TAG=$aspnetImageTag80"
