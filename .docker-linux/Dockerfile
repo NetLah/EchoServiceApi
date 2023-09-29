@@ -5,5 +5,4 @@ WORKDIR /app
 EXPOSE 80
 RUN apk update && apk add --no-cache ca-certificates
 COPY app .
-ENTRYPOINT ["/opt/startup/init_container.sh"]
-CMD ["dotnet", "EchoServiceApi.dll"]
+ENTRYPOINT ["/opt/startup/init_container.sh", "exec", "dotnet", "EchoServiceApi.dll"]
