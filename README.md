@@ -1,6 +1,6 @@
-# ASPNET.Core 6 Echo Service WebApi
+# ASP.NET Core Echo Service WebApi
 
-ASPNET.Core 6 WebApi provide Echo Service Api for troubleshooting and diagnosing during deployment and integration. This is useful tool on detecting deployment (setup environment) and development issue OAuth and OIDC with deployment environment.
+ASP.NET Core WebApi provide Echo Service Api for troubleshooting and diagnosing during deployment and integration. This is useful tool on detecting deployment (setup environment) and development issue OAuth and OIDC with deployment environment.
 
 ## Build Status
 
@@ -14,7 +14,7 @@ ASPNET.Core 6 WebApi provide Echo Service Api for troubleshooting and diagnosing
 
 - Support Linux and Windows Server 2019 with nanoserver 1809 base.
 
-- This docker respository not support tag `latest` and multi arch yet, there is 2 tags `linux` and `nanoserver-1809`
+- This docker repository not support tag `latest` and multi arch yet, there is 2 tags `linux` and `nanoserver-1809`
 
 ```
 docker pull netlah/echo-service-api:linux
@@ -23,9 +23,9 @@ docker logs -f echoapi
 docker rm -f echoapi
 ```
 
-### Run ASP.NETCore Echo Service API from command line using dotnet
+### Run ASP.NET Core Echo Service API from command line using dotnet
 
-- Checkout source code from Github
+- Checkout source code from GitHub
 
 - Run the ASP.NET Core WebApi application using command line
 
@@ -69,11 +69,11 @@ https://<domain:port>/e/<what-ever-path-and-method>
 
 ### Test with hosting and Reverse Proxy
 
-- This Echo Service Api support both IIS In process, IIS out process, IIS ARR Urlrewite or NGINX.
+- This Echo Service Api support both IIS In process, IIS out process, IIS ARR URL Rewrite or NGINX.
 
 - For forwarded headers issue when behind Reverse Proxy, can check this article for further understanding: https://devblogs.microsoft.com/aspnet/forwarded-headers-middleware-updates-in-net-core-3-0-preview-6/
 
-- To add support Forwarded Headers when use with Reverse Proxy, make sure add this environment setting (environment setings, it is not support appsettings.json).
+- To add support Forwarded Headers when use with Reverse Proxy, make sure add this environment setting (environment settings, it is not support appsettings.json).
 
 ```
 ASPNETCORE_FORWARDEDHEADERS_ENABLED=true

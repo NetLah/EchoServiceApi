@@ -28,7 +28,9 @@ public class KeyVaultKeyVerifier : BaseVerifier
             var keyName = locationParts[2];
             var version = locationParts.Length >= 4 ? locationParts[3] : null;
             if (string.IsNullOrEmpty(version))
+            {
                 version = null;
+            }
 
             var keyClient = new KeyClient(keyIdentifier, tokenCredential);
             var response = await keyClient.GetKeyAsync(keyName, version);
@@ -51,7 +53,7 @@ public class KeyVaultKeyVerifier : BaseVerifier
 
             var detail = $"KeyType={keyVaultKey.KeyType}; Text={text}; Signature={signed}; Ciphertext={ciphertext}; Plaintext={decryptText}; ValidSignature={validSignature}";
 
-            return VerifyResult.Successed("KeyVaultKey", connectionObj, detail: detail);
+            return VerifyResult.Succeed("KeyVaultKey", connectionObj, detail: detail);
         }
 
         return new VerifyResult

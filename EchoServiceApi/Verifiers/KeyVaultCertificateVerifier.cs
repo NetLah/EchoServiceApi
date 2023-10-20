@@ -33,8 +33,11 @@ public class KeyVaultCertificateVerifier : BaseVerifier
             var certificateName = locationParts[2];
             var versions = new List<string?>();
             var version = locationParts.Length >= 4 ? locationParts[3] : null;
-            if (string.IsNullOrEmpty(version)) version = null;
-            
+            if (string.IsNullOrEmpty(version))
+            {
+                version = null;
+            }
+
             versions.Add(version);
 
             if (privateKey)

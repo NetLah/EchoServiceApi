@@ -18,7 +18,7 @@ public class VerifyResult
             {
                 Success = false,
                 Error = $"{ex.GetType().FullName}: {cosmosException.Message}",
-                Disagnostics = cosmosException.Diagnostics?.ToString(),
+                Diagnostics = cosmosException.Diagnostics?.ToString(),
                 StackTrace = cosmosException.StackTrace,
                 DetailError = cosmosException.ToString(),
             }
@@ -31,7 +31,7 @@ public class VerifyResult
             };
     }
 
-    public static VerifyResult Successed(string serviceName, ProviderConnectionString connectionObj, string? detail = null)
+    public static VerifyResult Succeed(string serviceName, ProviderConnectionString connectionObj, string? detail = null)
     {
         return new VerifySuccessMessage
         {
@@ -57,7 +57,7 @@ public class VerifyFailed : VerifyResult
     public string? Error { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public object? Disagnostics { get; set; }
+    public object? Diagnostics { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? StackTrace { get; internal set; }

@@ -13,7 +13,9 @@ public class HttpVerifier : BaseVerifier
     public async Task<string> VerifyAsync(Uri url, string? host)
     {
         if (url == null)
+        {
             throw new ArgumentException("Url is required");
+        }
 
         if (!string.IsNullOrEmpty(host))
         {

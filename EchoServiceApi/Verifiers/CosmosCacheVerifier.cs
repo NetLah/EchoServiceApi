@@ -17,12 +17,12 @@ public class CosmosCacheVerifier : BaseCosmosVerifier
     public async Task<VerifyResult> VerifyAsync(string name)
     {
         var connectionObj = GetConnection(name);
-        var cosmosCacheInfo = connectionObj.Get<CosmosCacheInfo>();
+        var cosmosCacheInfo = connectionObj.Get<CosmosCacheInfo>() ?? throw new Exception("CosmosCacheInfo is required");
 
         var databaseName = cosmosCacheInfo.DatabaseName;
         var containerName = cosmosCacheInfo.ContainerName;
 
-        using var cosmosclient = await CreateClientAsync(connectionObj, cosmosCacheInfo);
+        using var cosmosClient = await CreateClientAsync(connectionObj, cosmosCacheInfo);
 
         using var scope = LoggerBeginScopeDiagnostic();
 
@@ -31,7 +31,7 @@ public class CosmosCacheVerifier : BaseCosmosVerifier
 
         var cosmosCacheOptions = new CosmosCacheOptions
         {
-            CosmosClient = cosmosclient,
+            CosmosClient = cosmosClient,
             ContainerName = containerName,
             DatabaseName = databaseName,
             CreateIfNotExists = false,
@@ -39,6 +39,6 @@ public class CosmosCacheVerifier : BaseCosmosVerifier
         var cache = new CosmosCache(Options.Create(cosmosCacheOptions));
         _ = await cache.GetStringAsync("CosmosCacheVerifier");
 
-        return VerifyResult.Successed("CosmosCache", connectionObj);
+        return VerifyResult.Succeed("CosmosCache", connectionObj);
     }
 }
