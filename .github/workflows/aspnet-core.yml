@@ -106,7 +106,7 @@ jobs:
           flavor: |
             latest=auto
             suffix=${{ env.TAG_SUFFIX }}
-            prefix=8.0-preview-
+            prefix=8.0-rc-
           tags: |
             type=raw,enable=${{ github.event_name != 'pull_request' }},priority=699,value=${{ steps.minver.outputs.version }}
             type=ref,event=branch,priority=500
