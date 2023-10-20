@@ -80,6 +80,7 @@
     <PackageReference Update="Dapper" Version="2.0.*" />
     <PackageReference Update="Docnet.Core" Version="2.*" />
     <PackageReference Update="DocumentFormat.OpenXml" Version="2.13.*" />
+    <PackageReference Update="Elastic.CommonSchema.Serilog" Version="8.*" />
     <PackageReference Update="ExcelDataReader" Version="3.*" />
     <PackageReference Update="ExcelDataReader.DataSet" Version="3.*" />
     <PackageReference Update="FileHelpers.Fluent.Fixed" Version="2.*" />
@@ -97,6 +98,7 @@
     <PackageReference Update="PdfSharpCore" Version="1.*" />
     <PackageReference Update="Pipelines.Sockets.Unofficial" Version="2.*" />
     <PackageReference Update="RabbitMQ.Client" Version="6.2.2" />
+    <PackageReference Update="Seq.Api" Version="2023.*" />
     <PackageReference Update="SkiaSharp" Version="2.88.*" />
     <PackageReference Update="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.*" />
     <PackageReference Update="SkiaSharp.NativeAssets.NanoServer" Version="2.88.*" />
@@ -289,9 +291,9 @@
     <!--microsoft identity-->
     <PackageReference Update="Microsoft.Graph" Version="5.*" />
     <PackageReference Update="Microsoft.Graph.Core" Version="3.*" />
-    <PackageReference Update="Microsoft.Identity.Abstractions" Version="3.*" />
+    <PackageReference Update="Microsoft.Identity.Abstractions" Version="5.*" />
     <PackageReference Update="Microsoft.Identity.Client" Version="4.*" />
-    <PackageReference Update="Microsoft.Identity.Client.Extensions.Msal" Version="2.*" />
+    <PackageReference Update="Microsoft.Identity.Client.Extensions.Msal" Version="4.*" />
     <PackageReference Update="Microsoft.Identity.Web" Version="2.*" />
     <PackageReference Update="Microsoft.Identity.Web.Certificate" Version="2.*" />
     <PackageReference Update="Microsoft.Identity.Web.Certificateless" Version="2.*" />
@@ -300,14 +302,14 @@
     <PackageReference Update="Microsoft.Identity.Web.TokenAcquisition" Version="2.*" />
     <PackageReference Update="Microsoft.Identity.Web.TokenCache" Version="2.*" />
     <PackageReference Update="Microsoft.Identity.Web.MicrosoftGraph" Version="2.*" />
-    <PackageReference Update="Microsoft.IdentityModel.Abstractions" Version="6.*" />
-    <PackageReference Update="Microsoft.IdentityModel.JsonWebTokens" Version="6.*" />
-    <PackageReference Update="Microsoft.IdentityModel.Logging" Version="6.*" />
-    <PackageReference Update="Microsoft.IdentityModel.LoggingExtensions" Version="6.*" />
-    <PackageReference Update="Microsoft.IdentityModel.Protocols" Version="6.*" />
-    <PackageReference Update="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="6.*" />
-    <PackageReference Update="Microsoft.IdentityModel.Tokens" Version="6.*" />
-    <PackageReference Update="Microsoft.IdentityModel.Validators" Version="6.*" />
+    <PackageReference Update="Microsoft.IdentityModel.Abstractions" Version="7.*" />
+    <PackageReference Update="Microsoft.IdentityModel.JsonWebTokens" Version="7.*" />
+    <PackageReference Update="Microsoft.IdentityModel.Logging" Version="7.*" />
+    <PackageReference Update="Microsoft.IdentityModel.LoggingExtensions" Version="7.*" />
+    <PackageReference Update="Microsoft.IdentityModel.Protocols" Version="7.*" />
+    <PackageReference Update="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="7.*" />
+    <PackageReference Update="Microsoft.IdentityModel.Tokens" Version="7.*" />
+    <PackageReference Update="Microsoft.IdentityModel.Validators" Version="7.*" />
     <PackageReference Update="Microsoft.Kiota.Abstractions" Version="1.*" />
     <PackageReference Update="Microsoft.Kiota.Authentication.Azure" Version="1.*" />
     <PackageReference Update="Microsoft.Kiota.Http.HttpClientLibrary" Version="1.*" />
