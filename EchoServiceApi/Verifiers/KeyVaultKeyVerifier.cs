@@ -34,7 +34,7 @@ public class KeyVaultKeyVerifier : BaseVerifier
 
             var keyClient = new KeyClient(keyIdentifier, tokenCredential);
             var response = await keyClient.GetKeyAsync(keyName, version);
-            KeyVaultKey keyVaultKey = response.Value;
+            var keyVaultKey = response.Value;
 
             var cryptographyClient = new CryptographyClient(vaultUri, tokenCredential);
 

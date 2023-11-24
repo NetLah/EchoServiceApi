@@ -38,12 +38,15 @@ public class TokenCredentialFactory
         return result;
     }
 
-    public async Task<TokenCredential?> GetTokenCredentialAsync(AzureCredentialInfo? options) => options != null && options.ClientId is { } clientId
+    public async Task<TokenCredential?> GetTokenCredentialAsync(AzureCredentialInfo? options)
+    {
+        return options != null && options.ClientId is { } clientId
             ? options.TenantId is { } tenantId
                 && options.ClientSecret is { } clientSecret
                 ? await GetClientSecretCredentialAsync(tenantId, clientId, clientSecret)
                 : await GetManagedIdentityClientIdAsync(clientId)
             : null;
+    }
 
     public string? Redact(string? secret)
     {
@@ -99,17 +102,23 @@ public class TokenCredentialFactory
     }
 
     private async Task<TokenCredential> GetDefaultAzureCredentialAsync()
-        => (await PushCredentialTypeAsync("default", null, _lazyDefault.Value)).TokenCredential;
+    {
+        return (await PushCredentialTypeAsync("default", null, _lazyDefault.Value)).TokenCredential;
+    }
 
     private async Task<TokenCredential> GetManagedIdentityClientIdAsync(string clientId)
-        => (await PushCredentialTypeAsync("clientId", clientId,
-            _managedIdentities.GetOrAdd(clientId,
-                _ => new TokenCredentialWrapper(new ManagedIdentityCredential(clientId), $"clientId={clientId}")))).TokenCredential;
+    {
+        return (await PushCredentialTypeAsync("clientId", clientId,
+                _managedIdentities.GetOrAdd(clientId,
+                    _ => new TokenCredentialWrapper(new ManagedIdentityCredential(clientId), $"clientId={clientId}")))).TokenCredential;
+    }
 
     private async Task<TokenCredential> GetClientSecretCredentialAsync(string tenantId, string clientId, string clientSecret)
-        => (await PushCredentialTypeAsync("clientSecret", clientId,
-            _clientSecretsIdentities.GetOrAdd($"{tenantId}_{clientId}_{clientSecret}",
-                _ => new TokenCredentialWrapper(new ClientSecretCredential(tenantId, clientId, clientSecret), $"appId={clientId}/tenantId={tenantId}")))).TokenCredential;
+    {
+        return (await PushCredentialTypeAsync("clientSecret", clientId,
+                _clientSecretsIdentities.GetOrAdd($"{tenantId}_{clientId}_{clientSecret}",
+                    _ => new TokenCredentialWrapper(new ClientSecretCredential(tenantId, clientId, clientSecret), $"appId={clientId}/tenantId={tenantId}")))).TokenCredential;
+    }
 }
 
 public class AzureCredentialInfo

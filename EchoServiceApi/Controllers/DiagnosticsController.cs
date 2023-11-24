@@ -40,9 +40,20 @@ namespace EchoServiceApi.Controllers
         }
 
         // Add multi connections query
-        public IActionResult Connection1([FromServices] HttpContextInfo httpContextInfo) => Connection(httpContextInfo, "Connection1");
-        public IActionResult Connection2([FromServices] HttpContextInfo httpContextInfo) => Connection(httpContextInfo, "Connection2");
-        public IActionResult Connection3([FromServices] HttpContextInfo httpContextInfo) => Connection(httpContextInfo, "Connection3");
+        public IActionResult Connection1([FromServices] HttpContextInfo httpContextInfo)
+        {
+            return Connection(httpContextInfo, "Connection1");
+        }
+
+        public IActionResult Connection2([FromServices] HttpContextInfo httpContextInfo)
+        {
+            return Connection(httpContextInfo, "Connection2");
+        }
+
+        public IActionResult Connection3([FromServices] HttpContextInfo httpContextInfo)
+        {
+            return Connection(httpContextInfo, "Connection3");
+        }
 
         public async Task<IActionResult> CosmosCacheAsync([FromServices] CosmosCacheVerifier cosmosVerifier, string name)
         {

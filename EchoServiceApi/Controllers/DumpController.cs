@@ -35,15 +35,18 @@ public class DumpController : ControllerBase
                 .ToDictionary(kv => kv.Key, kv => kv.Value));
     }
 
-    public JsonResult ConnectionStrings([FromServices] IConfiguration configuration) => new(
-        new ConnectionStringManager(configuration)
-            .ConnectionStrings
-            .ToDictionary(c => c.Key, c => new
-            {
-                c.Value.Raw,
-                Provider = c.Value.Provider.ToString(),
-                c.Value.Custom,
-            }));
+    public JsonResult ConnectionStrings([FromServices] IConfiguration configuration)
+    {
+        return new(
+            new ConnectionStringManager(configuration)
+                .ConnectionStrings
+                .ToDictionary(c => c.Key, c => new
+                {
+                    c.Value.Raw,
+                    Provider = c.Value.Provider.ToString(),
+                    c.Value.Custom,
+                }));
+    }
 
     public JsonResult Environments()
     {

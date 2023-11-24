@@ -8,7 +8,10 @@ public class KeyVaultCertificateVerifier : BaseVerifier
 {
     public KeyVaultCertificateVerifier(IServiceProvider serviceProvider) : base(serviceProvider) { }
 
-    private static string FormatCert(X509Certificate2 cert, bool privateKey) => $"Subject={cert.Subject}; Expires={cert.GetExpirationDateString()}; HasPrivateKey={privateKey}";
+    private static string FormatCert(X509Certificate2 cert, bool privateKey)
+    {
+        return $"Subject={cert.Subject}; Expires={cert.GetExpirationDateString()}; HasPrivateKey={privateKey}";
+    }
 
     public async Task<VerifyResult> VerifyAsync(string name, bool privateKey, bool all)
     {
@@ -59,10 +62,14 @@ public class KeyVaultCertificateVerifier : BaseVerifier
                 foreach (var item in versions)
                 {
                     var response = await secretClient.GetSecretAsync(certificateName, item);
-                    KeyVaultSecret keyVaultSecret = response.Value;
+                    var keyVaultSecret = response.Value;
                     var bytes = Convert.FromBase64String(keyVaultSecret.Value);
                     cert = new X509Certificate2(bytes, (string?)null, X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.EphemeralKeySet);
-                    string format(X509Certificate2 cert) => $"Version={keyVaultSecret.Properties.Version}; Enabled={keyVaultSecret.Properties.Enabled}; {FormatCert(cert, privateKey)}; Length={bytes.Length}";
+                    string format(X509Certificate2 cert)
+                    {
+                        return $"Version={keyVaultSecret.Properties.Version}; Enabled={keyVaultSecret.Properties.Enabled}; {FormatCert(cert, privateKey)}; Length={bytes.Length}";
+                    }
+
                     result.Add(format(cert));
                 }
             }
@@ -84,7 +91,11 @@ public class KeyVaultCertificateVerifier : BaseVerifier
                         (await certificateClient.GetCertificateAsync(certificateName)).Value :
                         (await certificateClient.GetCertificateVersionAsync(certificateName, item)).Value;
                     cert = new X509Certificate2(keyVaultCertificate.Cer);
-                    string format(X509Certificate2 cert) => $"Version={keyVaultCertificate.Properties.Version}; Enabled={keyVaultCertificate.Properties.Enabled}; {FormatCert(cert, privateKey)}; Length={keyVaultCertificate.Cer.Length}";
+                    string format(X509Certificate2 cert)
+                    {
+                        return $"Version={keyVaultCertificate.Properties.Version}; Enabled={keyVaultCertificate.Properties.Enabled}; {FormatCert(cert, privateKey)}; Length={keyVaultCertificate.Cer.Length}";
+                    }
+
                     result.Add(format(cert));
                 }
             }

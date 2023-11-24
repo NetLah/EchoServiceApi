@@ -7,32 +7,56 @@ namespace EchoServiceApi.Controllers;
 public class EchoController : ControllerBase
 {
     [Route("400")]
-    public IActionResult OnError400() => CodeAndMessage(400, "Test bad request");
+    public IActionResult OnError400()
+    {
+        return CodeAndMessage(400, "Test bad request");
+    }
 
     [Route("401")]
-    public IActionResult OnError401() => CodeAndMessage(401, "Test unauthorized");
+    public IActionResult OnError401()
+    {
+        return CodeAndMessage(401, "Test unauthorized");
+    }
 
     [Route("403")]
-    public IActionResult OnError403() => CodeAndMessage(403, "Test forbidden");
+    public IActionResult OnError403()
+    {
+        return CodeAndMessage(403, "Test forbidden");
+    }
 
     [Route("404")]
-    public IActionResult OnError404() => CodeAndMessage(404, "Test not found");
+    public IActionResult OnError404()
+    {
+        return CodeAndMessage(404, "Test not found");
+    }
 
     [Route("500")]
-    public IActionResult OnError500() => CodeAndMessage(500, "Test internal server error");
+    public IActionResult OnError500()
+    {
+        return CodeAndMessage(500, "Test internal server error");
+    }
 
     [Route("502")]
-    public IActionResult OnError502() => CodeAndMessage(502, "Test bad gateway");
+    public IActionResult OnError502()
+    {
+        return CodeAndMessage(502, "Test bad gateway");
+    }
 
     [Route("503")]
-    public IActionResult OnError503() => CodeAndMessage(503, "Test service unavailable");
-
-    private static IActionResult CodeAndMessage(int code, string message) => new ContentResult
+    public IActionResult OnError503()
     {
-        Content = message,
-        ContentType = "text/plain",
-        StatusCode = code,
-    };
+        return CodeAndMessage(503, "Test service unavailable");
+    }
+
+    private static IActionResult CodeAndMessage(int code, string message)
+    {
+        return new ContentResult
+        {
+            Content = message,
+            ContentType = "text/plain",
+            StatusCode = code,
+        };
+    }
 
     [Route("{*url}")]
     [ApiExplorerSettings(IgnoreApi = true)]
@@ -65,7 +89,9 @@ public class EchoController : ControllerBase
     }
 
     private static IDictionary<string, string>? ToDict(IEnumerable<KeyValuePair<string, StringValues>>? headers)
-        => headers?.ToDictionary(e => e.Key, e => e.Value.ToString());
+    {
+        return headers?.ToDictionary(e => e.Key, e => e.Value.ToString());
+    }
 
     public class MyResult
     {

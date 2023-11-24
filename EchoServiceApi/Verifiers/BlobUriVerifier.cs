@@ -20,7 +20,7 @@ public class BlobUriVerifier : BaseVerifier
 
         var isExist = (await blobClient.ExistsAsync()).Value;
 
-        Response<BlobProperties>? response = !isExist ? null : await blobClient.GetPropertiesAsync();
+        var response = !isExist ? null : await blobClient.GetPropertiesAsync();
         var props = response?.Value;
 
         var detail = $"created:{props?.CreatedOn}; modified:{props?.LastModified}";
@@ -32,5 +32,8 @@ public class BlobUriVerifier : BaseVerifier
         };
     }
 
-    public new ProviderConnectionString GetConnection(string name) => base.GetConnection(name);
+    public new ProviderConnectionString GetConnection(string name)
+    {
+        return base.GetConnection(name);
+    }
 }

@@ -36,5 +36,8 @@ public abstract class BaseVerifier
         return connectionObj;
     }
 
-    protected IDisposable LoggerBeginScopeDiagnostic() => Logger.BeginScope(DiagnosticInfo.LoggingScopeState) ?? throw new Exception("Logger.BeginScope null");
+    protected IDisposable LoggerBeginScopeDiagnostic()
+    {
+        return Logger.BeginScope(DiagnosticInfo.LoggingScopeState) ?? throw new Exception("Logger.BeginScope null");
+    }
 }
