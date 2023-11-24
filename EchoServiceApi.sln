@@ -15,6 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Directory.Build.targets = Directory.Build.targets
 		docker-build.ps1 = docker-build.ps1
 		.docker-linux\Dockerfile = .docker-linux\Dockerfile
+		.docker-windows\Dockerfile = .docker-windows\Dockerfile
 		README.md = README.md
 	EndProjectSection
 EndProject
