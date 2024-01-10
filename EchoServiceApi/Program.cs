@@ -48,6 +48,7 @@ try
     builder.Services.AddScoped<BlobUriVerifier>();
     builder.Services.AddScoped<DirVerifier>();
     builder.Services.AddScoped<ServiceBusVerifier>();
+    builder.Services.AddScoped<CertificateVerifier>();
     builder.Services.AddHttpClient<HttpVerifier>();
 
     builder.Services.AddHttpContextAccessor();

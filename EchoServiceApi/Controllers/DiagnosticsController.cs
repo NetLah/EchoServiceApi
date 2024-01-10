@@ -181,5 +181,18 @@ namespace EchoServiceApi.Controllers
                 return Ok(VerifyResult.Failed(ex));
             }
         }
+
+        public async Task<IActionResult> CertificateAsync([FromServices] CertificateVerifier certificateVerifier, string name, bool privateKey)
+        {
+            try
+            {
+                var result = await certificateVerifier.VerifyAsync(name, privateKey);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return Ok(VerifyResult.Failed(ex));
+            }
+        }
     }
 }
