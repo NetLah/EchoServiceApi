@@ -16,15 +16,16 @@ public class CertificateVerifier : BaseVerifier
     {
         var connectionObj = GetConnection(name);
 
-        var certificateConfig = connectionObj.Get<CertificateConfig>() ?? throw new ArgumentNullException("connection name not found");
+        var certificateConfig = connectionObj.Get<CertificateConfig>() ?? throw new Exception("connection name not found");
         var cert = CertificateLoader.LoadCertificate(certificateConfig, "certificate", null, privateKey);
-        // var cert = new X509Certificate2(certificateConfig.Path ?? throw new ArgumentNullException(), certificateConfig.Password, X509KeyStorageFlags.DefaultKeySet);
+        // var cert = new X509Certificate2(certificateConfig.Path ?? throw new ArgumentNullException(), certificateConfig.Password, X509KeyStorageFlags.DefaultKeySet)
+
         try
         {
             var result = new List<string>();
             if (cert != null)
             {
-                string format(X509Certificate2 cert)
+                static string format(X509Certificate2 cert)
                 {
                     return $"{FormatCert(cert, cert.HasPrivateKey)}";
                 }
