@@ -29,6 +29,13 @@ try
 
     builder.UseSerilog(logger => LogAppEvent(logger, "Application initializing...", appInfo));
     var logger = AppLog.Logger;
+    void LogAssembly(AssemblyInfo assembly)
+    {
+        logger.LogInformation("{title}; Version:{version} Framework:{framework}",
+        assembly.Title, assembly.InformationalVersion, assembly.FrameworkName);
+    }
+
+    LogAssembly(new AssemblyInfo(typeof(Serilog.SerilogApplicationBuilderExtensions).Assembly));
 
     // Add services to the container.
 
