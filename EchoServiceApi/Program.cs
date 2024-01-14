@@ -49,6 +49,7 @@ try
     builder.Services.AddScoped<DirVerifier>();
     builder.Services.AddScoped<ServiceBusVerifier>();
     builder.Services.AddScoped<CertificateVerifier>();
+    builder.Services.AddScoped<DnsHostEntryVerifier>();
     builder.Services.AddHttpClient<HttpVerifier>();
 
     builder.Services.AddHttpContextAccessor();

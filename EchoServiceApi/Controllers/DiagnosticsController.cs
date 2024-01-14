@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace EchoServiceApi.Controllers
 {
     [Route("[controller]/[action]")]
+    [Route("diag/[action]")]
     public class DiagnosticsController : ControllerBase
     {
         public IActionResult GetInfo([FromServices] NetLah.Diagnostics.IAssemblyInfo appInfo)
@@ -187,6 +188,19 @@ namespace EchoServiceApi.Controllers
             try
             {
                 var result = await certificateVerifier.VerifyAsync(name, privateKey);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return Ok(VerifyResult.Failed(ex));
+            }
+        }
+
+        public async Task<IActionResult> DnsHostEntryAsync([FromServices] DnsHostEntryVerifier dnsHostEntryVerifier, string? host)
+        {
+            try
+            {
+                var result = await dnsHostEntryVerifier.VerifyAsync(host);
                 return Ok(result);
             }
             catch (Exception ex)
