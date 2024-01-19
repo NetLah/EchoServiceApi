@@ -40,12 +40,38 @@ public class TokenCredentialFactory
 
     public async Task<TokenCredential?> GetTokenCredentialAsync(AzureCredentialInfo? options)
     {
-        return options != null && options.ClientId is { } clientId
-            ? options.TenantId is { } tenantId
-                && options.ClientSecret is { } clientSecret
-                ? await GetClientSecretCredentialAsync(tenantId, clientId, clientSecret)
-                : await GetManagedIdentityClientIdAsync(clientId)
-            : null;
+        if (options != null)
+        {
+            if (options.CredentialType is { } credentialType && !string.IsNullOrWhiteSpace(credentialType))
+            {
+                return await GetByCredentialTypeAsync(credentialType, options);
+            }
+            else
+            {
+                if (options.ClientId is { } clientId)
+                {
+                    return options.TenantId is { } tenantId && options.ClientSecret is { } clientSecret
+                        ? await GetClientSecretCredentialAsync(tenantId, clientId, clientSecret)
+                        : await GetManagedIdentityClientIdAsync(clientId);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private Task<TokenCredential?> GetByCredentialTypeAsync(string credentialType, AzureCredentialInfo? options)
+    {
+        if ("AzureDeveloperCliCredential".Equals(credentialType, StringComparison.InvariantCultureIgnoreCase))
+        {
+            return Task.FromResult<TokenCredential?>(new AzureDeveloperCliCredential());
+        }
+        else if ("AzureCliCredential".Equals(credentialType, StringComparison.InvariantCultureIgnoreCase))
+        {
+            return Task.FromResult<TokenCredential?>(new AzureCliCredential());
+        }
+
+        return Task.FromResult<TokenCredential?>(null);
     }
 
     public string? Redact(string? secret)
@@ -126,6 +152,7 @@ public class AzureCredentialInfo
     public string? TenantId { get; set; }
     public string? ClientId { get; set; }
     public string? ClientSecret { get; set; }
+    public string? CredentialType { get; set; }
 }
 
 public class TokenCredentialWrapper
