@@ -16,17 +16,23 @@ jobs:
     name: ${{ matrix.runs-on }}
     runs-on: ${{ matrix.runs-on }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Setup .NET Core 8.0.x, 7.0.x, and 6.0.x
-        uses: actions/setup-dotnet@v3
+      - name: Setup .NET 8.0.x, 7.0.x and 6.0.x
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: |
             6.0.x
             7.0.x
             8.0.x
+
+      - name: Setup .NET 9.0.x Preview
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+          dotnet-quality: "preview"
 
       - name: dotnet info
         run: dotnet --info
@@ -50,7 +56,7 @@ jobs:
       - name: Docker meta 6.0
         if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
         id: meta60
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           images: |
             ${{ secrets.DOCKER_HUB_REPOS }}
@@ -76,7 +82,7 @@ jobs:
       - name: Docker meta 7.0
         if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
         id: meta70
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           images: |
             ${{ secrets.DOCKER_HUB_REPOS }}
@@ -98,7 +104,7 @@ jobs:
       - name: Docker meta 8.0
         if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
         id: meta80
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           images: |
             ${{ secrets.DOCKER_HUB_REPOS }}
@@ -117,6 +123,28 @@ jobs:
             type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=570,pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
             type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=560,pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
 
+      - name: Docker meta 9.0
+        if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
+        id: meta90
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ${{ secrets.DOCKER_HUB_REPOS }}
+            netlah/echo-service-api,enable=${{ startsWith(github.ref, 'refs/tags/') }}
+          flavor: |
+            latest=auto
+            suffix=${{ env.TAG_SUFFIX }}
+            prefix=9.0-
+          tags: |
+            type=raw,enable=${{ github.event_name != 'pull_request' }},priority=699,value=${{ steps.minver.outputs.version }}
+            type=ref,event=branch,priority=500
+            type=ref,event=pr,priority=500,prefix=9.0-pr-
+            type=sha,enable=${{ github.event_name != 'pull_request' }},priority=400,prefix=9.0-sha-,format=short
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=600,pattern=^(\d+\.\d+(\.\d+)?(-.+)?)$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=590,pattern=^(\d+\.\d+(\.\d+)?)(-.+)?$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=570,pattern=^(\d+\.\d+)(\.\d+)?(-.+)?$,group=1
+            type=match,enable=${{ startsWith(github.ref, 'refs/tags/') }},priority=560,pattern=^(\d+)\.\d+(\.\d+)?(-.+)?$,group=1
+
       - name: Install dependencies
         run: dotnet restore
 
@@ -127,18 +155,19 @@ jobs:
         run: dotnet test -c Release --no-build --verbosity normal
 
       - name: Publish
+        shell: pwsh
         run: |
-          dotnet publish EchoServiceApi -c Release -f net6.0 --no-build -o artifacts/net6.0/app
-          dotnet publish EchoServiceApi -c Release -f net7.0 --no-build -o artifacts/net7.0/app
-          dotnet publish EchoServiceApi -c Release -f net8.0 --no-build -o artifacts/net8.0/app
+          foreach ($framework in @('net6.0', 'net7.0', 'net8.0', 'net9.0')) {
+            dotnet publish EchoServiceApi -c Release -f $framework --no-build -o "artifacts/$($framework)/app"
+          }
 
       - name: Copy Dockerfile
         if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
         shell: pwsh
         run: |
-          Copy-Item -Recurse -Force -Path '.dockerignore',".docker-$( if ($Env:RUNNER_OS -eq 'Linux') { 'linux' } else { 'windows' } )/*" -Destination artifacts/net6.0/ -ErrorAction Stop -Verbose
-          Copy-Item -Recurse -Force -Path '.dockerignore',".docker-$( if ($Env:RUNNER_OS -eq 'Linux') { 'linux' } else { 'windows' } )/*" -Destination artifacts/net7.0/ -ErrorAction Stop -Verbose
-          Copy-Item -Recurse -Force -Path '.dockerignore',".docker-$( if ($Env:RUNNER_OS -eq 'Linux') { 'linux' } else { 'windows' } )/*" -Destination artifacts/net8.0/ -ErrorAction Stop -Verbose
+          foreach ($framework in @('net6.0', 'net7.0', 'net8.0', 'net9.0')) {
+            Copy-Item -Recurse -Force -Path '.dockerignore',".docker-$( if ($Env:RUNNER_OS -eq 'Linux') { 'linux' } else { 'windows' } )/*" -Destination "artifacts/$($framework)/" -ErrorAction Stop -Verbose
+          }
 
       - name: Enabling Docker Daemon With experimental features
         if: ${{ success() && runner.os == 'Linux' }}
@@ -152,11 +181,11 @@ jobs:
 
       - name: Set up Docker Buildx
         if: ${{ success() && (runner.os == 'Linux') }}
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       - name: Login to Docker Hub
         if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
@@ -179,3 +208,10 @@ jobs:
         run: |
           $aspnetImageTag80 = if ($Env:RUNNER_OS -eq 'Linux') { '8.0-alpine' } else { '8.0-nanoserver-1809' }
           ./docker-build.ps1 -Context ./artifacts/net8.0 -Squash -Tags "${{ steps.meta80.outputs.tags }}" -Labels "${{ steps.meta80.outputs.labels }}" -BuildArgs "ASPNET_IMAGE_TAG=$aspnetImageTag80"
+
+      - name: Build and Push 9.0
+        if: ${{ success() && (runner.os == 'Linux' || runner.os == 'Windows') }}
+        shell: pwsh
+        run: |
+          $aspnetImageTag90 = if ($Env:RUNNER_OS -eq 'Linux') { '9.0-alpine' } else { '9.0-preview-nanoserver-1809' }
+          ./docker-build.ps1 -Context ./artifacts/net9.0 -Squash -Tags "${{ steps.meta90.outputs.tags }}" -Labels "${{ steps.meta90.outputs.labels }}" -BuildArgs "ASPNET_IMAGE_TAG=$aspnetImageTag90"
