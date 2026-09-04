@@ -5,57 +5,81 @@
   <Import Project="$(MSBuildThisFileDirectory)Directory.Build.initial.targets" Condition="Exists('$(MSBuildThisFileDirectory)Directory.Build.initial.targets')" />
 
   <PropertyGroup Condition="'$(LatestDevFrameworkVersion)' == ''">
-    <LatestDevFrameworkVersion>10.*-*</LatestDevFrameworkVersion>
+    <LatestDevFrameworkVersion>11.1.*-*</LatestDevFrameworkVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(FrameworkVersion)' == ''">
-    <FrameworkVersion Condition="'$(NET_5_0_LESS)' == true">7.*</FrameworkVersion>
-    <FrameworkVersion Condition="'$(NET_6_0)' == true Or '$(NET_7_0)' == true Or '$(NET_8_0)' == true Or '$(NET_STD_2_X)' == true">8.*</FrameworkVersion>
-    <FrameworkVersion Condition="'$(NET_9_0_UP)' == true">9.*-*</FrameworkVersion>
+    <FrameworkVersion Condition="'$(NET_3_1)' == true">3.1.*</FrameworkVersion>
+    <FrameworkVersion Condition="'$(NET_5_0)' == true Or '$(NET_STD_2_X)' == true">6.*</FrameworkVersion>
+    <FrameworkVersion Condition="'$(NET_6_0)' == true Or '$(NET_7_0)' == true">8.*</FrameworkVersion>
+    <FrameworkVersion Condition="'$(NET_9_0)' == true Or '$(NET_8_0)' == true">10.*</FrameworkVersion>
+    <FrameworkVersion Condition="'$(NET_10_0)' == true">10.*</FrameworkVersion>
+    <FrameworkVersion Condition="'$(NET_11_0)' == true">11.*-*</FrameworkVersion>
     <FrameworkVersion Condition="'$(FrameworkVersion)' == ''">$(LatestDevFrameworkVersion)</FrameworkVersion>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(AspNetFrameworkVersion)' == ''">
-    <AspNetFrameworkVersion Condition="'$(NET_3_1)' == true">3.*</AspNetFrameworkVersion>
+  <PropertyGroup Condition="'$(AspNetFrameworkVersion)' == '' And '$(NET_STD_2_X)' != true">
+    <AspNetFrameworkVersion Condition="'$(NET_3_1)' == true">3.1.*</AspNetFrameworkVersion>
     <AspNetFrameworkVersion Condition="'$(NET_5_0)' == true">5.*</AspNetFrameworkVersion>
     <AspNetFrameworkVersion Condition="'$(NET_6_0)' == true">6.*</AspNetFrameworkVersion>
     <AspNetFrameworkVersion Condition="'$(NET_7_0)' == true">7.*</AspNetFrameworkVersion>
     <AspNetFrameworkVersion Condition="'$(NET_8_0)' == true">8.*</AspNetFrameworkVersion>
-    <AspNetFrameworkVersion Condition="'$(NET_9_0)' == true">9.*-*</AspNetFrameworkVersion>
+    <AspNetFrameworkVersion Condition="'$(NET_9_0)' == true">9.*</AspNetFrameworkVersion>
+    <AspNetFrameworkVersion Condition="'$(NET_10_0)' == true">10.*</AspNetFrameworkVersion>
+    <AspNetFrameworkVersion Condition="'$(NET_11_0)' == true">11.*-*</AspNetFrameworkVersion>
     <AspNetFrameworkVersion Condition="'$(AspNetFrameworkVersion)' == ''">$(LatestDevFrameworkVersion)</AspNetFrameworkVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(EFCoreFrameworkVersion)' == ''">
-    <EFCoreFrameworkVersion Condition="'$(NET_5_0_LESS_OR_STD)' == true">5.*</EFCoreFrameworkVersion>
+    <EFCoreFrameworkVersion Condition="'$(NET_3_1_LESS_OR_STD)' == true">3.1.*</EFCoreFrameworkVersion>
+    <EFCoreFrameworkVersion Condition="'$(NET_5_0)' == true">5.*</EFCoreFrameworkVersion>
     <EFCoreFrameworkVersion Condition="'$(NET_6_0)' == true Or '$(NET_7_0)' == true">7.*</EFCoreFrameworkVersion>
-    <EFCoreFrameworkVersion Condition="'$(NET_8_0)' == true">8.*</EFCoreFrameworkVersion>
-    <EFCoreFrameworkVersion Condition="'$(NET_9_0)' == true">9.*-*</EFCoreFrameworkVersion>
+    <EFCoreFrameworkVersion Condition="'$(NET_8_0_UP)' == true">9.*</EFCoreFrameworkVersion>
+    <EFCoreFrameworkVersion Condition="'$(NET_10_0)' == true">10.*</EFCoreFrameworkVersion>
+    <EFCoreFrameworkVersion Condition="'$(NET_11_0)' == true">11.*-*</EFCoreFrameworkVersion>
     <EFCoreFrameworkVersion Condition="'$(EFCoreFrameworkVersion)' == ''">$(LatestDevFrameworkVersion)</EFCoreFrameworkVersion>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(NpgsqlEFCoreFrameworkVersion)' == ''">
+    <!--<NpgsqlEFCoreFrameworkVersion Condition="'$(NpgsqlEFCoreFrameworkVersion)' == '' And '$(NET_9_0)' == true">9.*-*</NpgsqlEFCoreFrameworkVersion>-->
+    <NpgsqlEFCoreFrameworkVersion Condition="'$(NpgsqlEFCoreFrameworkVersion)' == ''">$(EFCoreFrameworkVersion)</NpgsqlEFCoreFrameworkVersion>
+  </PropertyGroup>
+
   <PropertyGroup>
+    <!-- Microsoft.IdentityModel.Tokens/8.19.* on 1/6/2026 reference to Microsoft.Bcl.Cryptography@10.0.2 -->
+    <MicrosoftIdentityModelVersion Condition="'$(MicrosoftIdentityModelVersion)' == '' And '$(NET_5_0_LESS_OR_STD)' == true">7.6.*</MicrosoftIdentityModelVersion>
+    <MicrosoftIdentityModelVersion Condition="'$(MicrosoftIdentityModelVersion)' == '' And '$(NET_7_0_LESS)' == true">8.18.*</MicrosoftIdentityModelVersion>
+    <MicrosoftIdentityModelVersion Condition="'$(MicrosoftIdentityModelVersion)' == ''">8.*</MicrosoftIdentityModelVersion>
     <NpgsqlVersion Condition="'$(NpgsqlVersion)' == '' And '$(NET_3_1_LESS_OR_STD)' == true">4.*</NpgsqlVersion>
-    <NpgsqlVersion Condition="'$(NpgsqlVersion)' == '' And '$(NET_9_0_UP)' == true">8.*</NpgsqlVersion>
+    <NpgsqlVersion Condition="'$(NpgsqlVersion)' == '' And '$(NET_11_0)' == true">10.*</NpgsqlVersion>
     <NpgsqlVersion Condition="'$(NpgsqlVersion)' == ''">$(EFCoreFrameworkVersion)</NpgsqlVersion>
-    <SystemTextJsonVersion Condition="'$(SystemTextJsonVersion)' == '' And '$(NET_5_0_LESS)' == true">8.*</SystemTextJsonVersion>
+    <NuGetPackageVersion Condition="'$(NuGetPackageVersion)' == ''">6.*</NuGetPackageVersion>
+    <SystemTextJsonVersion Condition="'$(SystemTextJsonVersion)' == '' And '$(NET_5_0_LESS)' == true">6.*</SystemTextJsonVersion>
+    <SystemTextJsonVersion Condition="'$(SystemTextJsonVersion)' == '' And ('$(NET_6_0)' == true Or '$(NET_7_0)' == true)">8.*</SystemTextJsonVersion>
     <SystemTextJsonVersion Condition="'$(SystemTextJsonVersion)' == ''">$(FrameworkVersion)</SystemTextJsonVersion>
     <!-- Swashbuckle.AspNetCore@6.3.2 reference to Microsoft.Extensions.ApiDescription.Server@6.0.5 by mistake -->
     <SwashbuckleVersion Condition="'$(SwashbuckleVersion)' == '' And '$(NET_5_0_LESS)' == true">6.3.1</SwashbuckleVersion>
-    <SwashbuckleVersion Condition="'$(SwashbuckleVersion)' == '' And '$(NET_6_0)' == true">6.4.*</SwashbuckleVersion>
+    <!--<SwashbuckleVersion Condition="'$(SwashbuckleVersion)' == '' And '$(NET_6_0_UP)' == true">6.7.*</SwashbuckleVersion>-->
     <SwashbuckleVersion Condition="'$(SwashbuckleVersion)' == ''">6.*</SwashbuckleVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(SerilogVersion)' == ''">
+    <SerilogVersion Condition="'$(NET_8_0_UP)' == true">10.*</SerilogVersion>
+    <SerilogVersion Condition="'$(SerilogVersion)' == ''">8.*</SerilogVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <!--build related-->
-    <PackageReference Update="Bullseye" Version="4.*" />
-    <PackageReference Include="MinVer" Version="4.*" PrivateAssets="All" />
-    <PackageReference Include="NetLah.AssemblyInfo.BuildTime.Target" Version="1.*" PrivateAssets="All" Condition="'$(ExcludeAssemblyBuildTime)' != true" />
-    <PackageReference Update="Microsoft.SourceLink.Gitea" Version="1.*" PrivateAssets="All" />
-    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="1.*" PrivateAssets="All" />
-    <PackageReference Update="SimpleExec" Version="11.*" />
+    <PackageReference Update="Bullseye" Version="6.*" />
+    <PackageReference Include="MinVer" Version="6.*" PrivateAssets="All" />
+    <PackageReference Include="NetLah.AssemblyInfo.BuildDate.Target" Version="1.*" PrivateAssets="All" Condition="'$(ExcludeAssemblyBuildDate)' != true And '$(ExcludeAssemblyBuildTime)' != true" />
+    <PackageReference Update="Microsoft.SourceLink.Gitea" Version="8.*" PrivateAssets="All" />
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.*" PrivateAssets="All" />
+    <PackageReference Update="SimpleExec" Version="12.*" />
 
     <!--the helpers -->
     <PackageReference Update="NetLah.Abstractions" Version="1.*" />
+    <PackageReference Update="NetLah.Extensions.ClockProvider" Version="1.*" />
     <PackageReference Update="NetLah.Extensions.CommandLineUtils" Version="0.*-*" />
     <PackageReference Update="NetLah.Extensions.Configuration" Version="1.*-*" />
     <PackageReference Update="NetLah.Extensions.EventAggregator" Version="1.*-*" />
@@ -63,40 +87,31 @@
     <PackageReference Update="NetLah.Extensions.Logging.Reference" Version="1.*-*" />
     <PackageReference Update="NetLah.Extensions.Logging.Serilog" Version="1.*-*" />
     <PackageReference Update="NetLah.Extensions.Logging.Serilog.AspNetCore" Version="1.*-*" />
+    <PackageReference Update="NetLah.Extensions.Logging.Serilog.AspNetCore" Version="1.0.0" Condition="'$(NET_3_1)' == true" />
+    <PackageReference Update="NetLah.Extensions.Logging.Serilog.HostApplication" Version="1.*-*" Condition="'$(NET_7_0_UP)' == true" />
     <PackageReference Update="NetLah.Extensions.SpaServices.Hosting" Version="1.*-*" />
+    <PackageReference Update="NetLah.Extensions.SpaServices.Hosting" Version="1.0.*-*" Condition="'$(NET_7_0_LESS)' == true" />
     <PackageReference Update="Testing.Dynamic.Json" Version="1.*-*" />
 
     <!--tests-->
     <PackageReference Update="AngleSharp" Version="*" />
     <PackageReference Update="coverlet.collector" Version="6.*" PrivateAssets="All" />
     <PackageReference Update="FluentAssertions" Version="6.*" PrivateAssets="All" />
-    <PackageReference Update="Microsoft.NET.Test.Sdk" Version="17.*" />
+    <PackageReference Update="Microsoft.NET.Test.Sdk" Version="18.*" />
     <PackageReference Update="Moq" Version="4.*" />
     <PackageReference Update="NUnit" Version="3.*" />
     <PackageReference Update="NUnit3TestAdapter" Version="4.*" PrivateAssets="All" />
     <PackageReference Update="TeamCity.VSTest.TestAdapter" Version="1.*" />
     <PackageReference Update="xunit" Version="2.*" />
-    <PackageReference Update="xunit.runner.visualstudio" Version="2.*" PrivateAssets="All" />
-
-    <!--serilog-->
-    <PackageReference Update="Serilog" Version="3.*" />
-    <PackageReference Update="Serilog.AspNetCore" Version="8.*" />
-    <PackageReference Update="Serilog.Enrichers.CorrelationId" Version="3.*" />
-    <PackageReference Update="Serilog.Enrichers.Environment" Version="2.*" />
-    <PackageReference Update="Serilog.Enrichers.Thread" Version="3.*" />
-    <PackageReference Update="Serilog.Extensions.Hosting" Version="8.*" />
-    <PackageReference Update="Serilog.Extensions.Logging" Version="8.*" />
-    <PackageReference Update="Serilog.Formatting.Compact" Version="2.*" />
-    <PackageReference Update="Serilog.Settings.Configuration" Version="8.*" />
-    <PackageReference Update="Serilog.Sinks.AzureAnalytics" Version="5.*" />
-    <PackageReference Update="Serilog.Sinks.Console" Version="5.*" />
-    <PackageReference Update="Serilog.Sinks.Debug" Version="2.*" />
-    <PackageReference Update="Serilog.Sinks.File" Version="5.*" />
-    <PackageReference Update="Serilog.Sinks.PeriodicBatching" Version="4.*" />
-    <PackageReference Update="Serilog.Sinks.Seq" Version="7.*" />
+    <PackageReference Update="xunit.extensibility.core" Version="2.*" />
+    <PackageReference Update="xunit.runner.visualstudio" Version="3.*" PrivateAssets="All" Condition="'$(NET_8_0_UP)' == true" />
+    <PackageReference Update="xunit.runner.visualstudio" Version="2.*" PrivateAssets="All" Condition="'$(NET_7_0_LESS)' == true" />
+    <PackageReference Update="xunit.runner.visualstudio" Version="2.4.*" PrivateAssets="All" Condition="'$(NET_5_0_LESS)' == true" />
 
     <!--misc-->
-    <PackageReference Update="AutoMapper" Version="12.*" />
+    <PackageReference Update="AutoMapper" Version="14.*" Condition="'$(NET_8_0_UP)' == true" />
+    <PackageReference Update="AutoMapper" Version="13.*" Condition="'$(NET_6_0)' == true Or '$(NET_7_0)' == true" />
+    <PackageReference Update="AutoMapper" Version="12.*" Condition="'$(NET_5_0_LESS)' == true" />
     <PackageReference Update="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.*" />
     <PackageReference Update="BouncyCastle.NetCore" Version="1.9.*" />
     <PackageReference Update="ClosedXML" Version="0.95.*" />
@@ -108,9 +123,12 @@
     <PackageReference Update="ExcelDataReader" Version="3.*" />
     <PackageReference Update="ExcelDataReader.DataSet" Version="3.*" />
     <PackageReference Update="FileHelpers.Fluent.Fixed" Version="2.*" />
+    <PackageReference Update="Humanizer" Version="2.*" />
     <PackageReference Update="Humanizer.Core" Version="2.*" />
     <PackageReference Update="LazyCache.AspNetCore" Version="2.*" />
     <PackageReference Update="LiteDB" Version="5.*" />
+    <PackageReference Update="Markdig" Version="0.*" />
+    <PackageReference Update="McMaster.Extensions.CommandLineUtils" Version="4.*" />
     <PackageReference Update="MessagePack" Version="2.*" />
     <PackageReference Update="MessagePack.Annotations" Version="2.*" />
     <PackageReference Update="MiniProfiler.AspNetCore" Version="4.*" />
@@ -120,7 +138,7 @@
     <PackageReference Update="Newtonsoft.Json" Version="13.0.*" />
     <PackageReference Update="Newtonsoft.Json.Schema" Version="3.0.*" />
     <PackageReference Update="PdfSharpCore" Version="1.*" />
-    <PackageReference Update="Pipelines.Sockets.Unofficial" Version="2.*" />
+    <PackageReference Update="Pipelines.Sockets.Unofficial" Version="2.2.8" />
     <PackageReference Update="RabbitMQ.Client" Version="6.2.2" />
     <PackageReference Update="Seq.Api" Version="2023.*" />
     <PackageReference Update="SkiaSharp" Version="2.88.*" />
@@ -128,15 +146,18 @@
     <PackageReference Update="SkiaSharp.NativeAssets.NanoServer" Version="2.88.*" />
     <PackageReference Update="SkiaSharp.QrCode" Version="0.6.0" />
     <PackageReference Update="Spire.Doc" Version="11.*" />
-    <PackageReference Update="StackExchange.Redis" Version="2.*" />
+    <PackageReference Update="StackExchange.Redis" Version="2.9.32" Condition="'$(NET_6_0_UP)' == true" />
+    <PackageReference Update="StackExchange.Redis" Version="2.6.122" Condition="'$(NET_5_0_LESS_OR_STD)' == true" />
+    <PackageReference Update="Std.UriTemplate" Version="2.*" />
     <PackageReference Update="Tavis.UriTemplates" Version="2.*" />
     <PackageReference Update="TimeZoneConverter" Version="5.*" />
-    <PackageReference Update="YamlDotNet" Version="11.*" />
+    <PackageReference Update="YamlDotNet" Version="16.*" />
     <PackageReference Update="ZXing.Net" Version="0.16.*" />
 
     <!--microsoft other-->
     <PackageReference Update="BenchmarkDotNet" Version="0.13.*" />
     <PackageReference Update="CommunityToolkit.HighPerformance" Version="8.*" />
+    <PackageReference Update="Microsoft.AspNetCore.Hosting" Version="[2.*,3)" />
     <PackageReference Update="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.AspNetCore.Mvc.Razor.Extensions" Version="6.*" />
     <PackageReference Update="Microsoft.AspNetCore.Razor.Language" Version="6.*" />
@@ -149,65 +170,72 @@
     <PackageReference Update="Microsoft.VisualStudio.Debugger.Contracts" Version="17.*" />
     <PackageReference Update="Microsoft.VisualStudio.Threading" Version="17.*" />
     <PackageReference Update="Microsoft.VisualStudio.Validation" Version="17.*" />
+    <PackageReference Update="System.ClientModel" Version="1.*" />
     <PackageReference Update="System.CommandLine" Version="2.*-*" />
-    <PackageReference Update="System.Memory" Version="4.5.4" />
+    <PackageReference Update="System.IO.FileSystem.AccessControl" Version="5.*" />
+    <PackageReference Update="System.Memory" Version="4.*" />
+    <PackageReference Update="System.Runtime.CompilerServices.Unsafe" Version="6.*" />
     <PackageReference Update="System.Runtime.Loader" Version="4.3.0" />
     <PackageReference Update="System.Runtime.Extensions" Version="4.3.1" />
     <PackageReference Update="System.Security.Principal.Windows" Version="5.*" />
-    <PackageReference Update="Yarp.ReverseProxy" Version="(1.*,2)" />
+    <PackageReference Update="Yarp.ReverseProxy" Version="[2.*,3)" />
 
     <!--microsoft CodeAnalysis-->
     <PackageReference Update="Microsoft.CodeAnalysis" Version="4.*" />
-    <PackageReference Update="Microsoft.CodeAnalysis.AnalyzerUtilities" Version="3.*" />
+    <PackageReference Update="Microsoft.CodeAnalysis.AnalyzerUtilities" Version="4.*" />
     <PackageReference Update="Microsoft.CodeAnalysis.CSharp" Version="4.*" />
     <PackageReference Update="Microsoft.CodeAnalysis.CSharp.Features" Version="4.*" />
     <PackageReference Update="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.*" />
     <PackageReference Update="Microsoft.CodeAnalysis.Features" Version="4.*" />
     <PackageReference Update="Microsoft.CodeAnalysis.Razor" Version="6.*" />
     <PackageReference Update="Microsoft.CodeAnalysis.Scripting" Version="4.*" />
-    <PackageReference Update="Microsoft.CodeAnalysis.Workspaces.Common" Version="*" />
+    <PackageReference Update="Microsoft.CodeAnalysis.VisualBasic" Version="4.*" />
+    <PackageReference Update="Microsoft.CodeAnalysis.VisualBasic.Workspaces" Version="4.*" />
+    <PackageReference Update="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.*" />
     <PackageReference Update="Microsoft.DiaSymReader" Version="2.*" />
 
     <!--microsoft extensions-->
     <PackageReference Update="Microsoft.Bcl.AsyncInterfaces" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.DotNet.Scaffolding.Shared" Version="$(FrameworkVersion)" />
-    <PackageReference Update="Microsoft.Extensions.Caching.Abstractions" Version="$(FrameworkVersion)" />
+    <PackageReference Update="Microsoft.Extensions.Caching.Abstractions" Version="$(FrameworkVersion)" Condition="'$(NET_10_0_LESS_OR_STD)' == true" />
     <PackageReference Update="Microsoft.Extensions.Caching.Memory" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.Extensions.Caching.StackExchangeRedis" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.Extensions.Configuration" Version="$(FrameworkVersion)" />
-    <PackageReference Update="Microsoft.Extensions.Configuration.Abstractions" Version="$(FrameworkVersion)" />
+    <PackageReference Update="Microsoft.Extensions.Configuration.Abstractions" Version="$(FrameworkVersion)" Condition="'$(NET_10_0_LESS_OR_STD)' == true" />
     <PackageReference Update="Microsoft.Extensions.Configuration.Binder" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.Extensions.Configuration.CommandLine" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.Extensions.Configuration.FileExtensions" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.Extensions.Configuration.Ini" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.Extensions.Configuration.Json" Version="$(FrameworkVersion)" />
+    <PackageReference Update="Microsoft.Extensions.Configuration.KeyPerFile" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.Extensions.Configuration.UserSecrets" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.Extensions.Configuration.Xml" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.Extensions.DependencyInjection" Version="$(FrameworkVersion)" />
-    <PackageReference Update="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(FrameworkVersion)" />
+    <PackageReference Update="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(FrameworkVersion)" Condition="'$(NET_10_0_LESS_OR_STD)' == true" />
     <PackageReference Update="Microsoft.Extensions.DependencyModel" Version="$(FrameworkVersion)" />
-    <PackageReference Update="Microsoft.Extensions.FileProviders.Abstractions" Version="$(FrameworkVersion)" />
+    <PackageReference Update="Microsoft.Extensions.Diagnostics.Abstractions" Version="$(FrameworkVersion)" Condition="'$(NET_8_0_UP)' == true And '$(NET_10_0_LESS)' == true" />
+    <PackageReference Update="Microsoft.Extensions.FileProviders.Abstractions" Version="$(FrameworkVersion)" Condition="'$(NET_10_0_LESS_OR_STD)' == true" />
     <PackageReference Update="Microsoft.Extensions.FileProviders.Physical" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.Extensions.FileSystemGlobbing" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.Extensions.Hosting" Version="$(FrameworkVersion)" />
-    <PackageReference Update="Microsoft.Extensions.Hosting.Abstractions" Version="$(FrameworkVersion)" />
+    <PackageReference Update="Microsoft.Extensions.Hosting.Abstractions" Version="$(FrameworkVersion)" Condition="'$(NET_10_0_LESS_OR_STD)' == true" />
     <PackageReference Update="Microsoft.Extensions.Hosting.Systemd" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.Extensions.Hosting.WindowsServices" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.Extensions.Http" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.Extensions.Identity.Core" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.Extensions.Identity.Stores" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.Extensions.Logging" Version="$(FrameworkVersion)" />
-    <PackageReference Update="Microsoft.Extensions.Logging.Abstractions" Version="$(FrameworkVersion)" />
+    <PackageReference Update="Microsoft.Extensions.Logging.Abstractions" Version="$(FrameworkVersion)" Condition="'$(NET_10_0_LESS_OR_STD)' == true" />
     <PackageReference Update="Microsoft.Extensions.Logging.Configuration" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.Extensions.Logging.Console" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.Extensions.Logging.Debug" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.Extensions.Logging.EventLog" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.Extensions.Logging.EventSource" Version="$(FrameworkVersion)" />
-    <PackageReference Update="Microsoft.Extensions.Options" Version="$(FrameworkVersion)" />
+    <PackageReference Update="Microsoft.Extensions.Options" Version="$(FrameworkVersion)" Condition="'$(NET_10_0_LESS_OR_STD)' == true" />
     <PackageReference Update="Microsoft.Extensions.Options.ConfigurationExtensions" Version="$(FrameworkVersion)" />
     <PackageReference Update="Microsoft.Extensions.ObjectPool" Version="$(FrameworkVersion)" />
-    <PackageReference Update="Microsoft.Extensions.Primitives" Version="$(FrameworkVersion)" />
+    <PackageReference Update="Microsoft.Extensions.Primitives" Version="$(FrameworkVersion)" Condition="'$(NET_10_0_LESS_OR_STD)' == true" />
     <PackageReference Update="Microsoft.Win32.SystemEvents" Version="$(FrameworkVersion)" />
 
     <PackageReference Update="System.Collections.Immutable" Version="$(FrameworkVersion)" />
@@ -225,8 +253,11 @@
     <PackageReference Update="System.Drawing.Common" Version="$(FrameworkVersion)" />
     <PackageReference Update="System.Formats.Asn1" Version="$(FrameworkVersion)" />
     <PackageReference Update="System.IO.Hashing" Version="$(FrameworkVersion)" />
-    <PackageReference Update="System.Memory.Data" Version="$(FrameworkVersion)" />
+    <PackageReference Update="System.IO.Pipelines" Version="$(FrameworkVersion)" />
+    <PackageReference Update="System.Memory.Data" Version="$(SystemTextJsonVersion)" />
     <PackageReference Update="System.Net.Http.Json" Version="$(FrameworkVersion)" />
+    <PackageReference Update="System.Reflection.Metadata" Version="$(FrameworkVersion)" />
+    <PackageReference Update="System.Reflection.Metadata" Version="1.*" Condition="'$(NET_3_1_LESS_OR_STD)' == true" />
     <PackageReference Update="System.Reflection.MetadataLoadContext" Version="$(FrameworkVersion)" />
     <PackageReference Update="System.Runtime.Caching" Version="$(FrameworkVersion)" />
     <PackageReference Update="System.Security.Cryptography.Pkcs" Version="$(FrameworkVersion)" />
@@ -236,8 +267,14 @@
     <PackageReference Update="System.ServiceProcess.ServiceController" Version="$(FrameworkVersion)" />
     <PackageReference Update="System.Text.Encoding.CodePages" Version="$(FrameworkVersion)" />
     <PackageReference Update="System.Text.Encodings.Web" Version="$(FrameworkVersion)" />
-    <PackageReference Update="System.Text.Json" Version="$(SystemTextJsonVersion)" />
+    <PackageReference Update="System.Text.Json" Version="$(SystemTextJsonVersion)" Condition="'$(NET_9_0_LESS_OR_STD)' == true" />
+    <PackageReference Update="System.Threading.Channels" Version="$(SystemTextJsonVersion)" />
     <PackageReference Update="System.Windows.Extensions" Version="$(FrameworkVersion)" />
+
+    <!-- .NET 8.0 -->
+    <PackageReference Update="Microsoft.Bcl.TimeProvider" Version="$(FrameworkVersion)" Condition="'$(NET_8_0_UP)' == true" />
+    <PackageReference Update="Microsoft.Extensions.TimeProvider.Testing" Version="$(FrameworkVersion)" Condition="'$(NET_8_0_UP)' == true" />
+    <PackageReference Update="Microsoft.Extensions.TimeProvider.Testing" Version="10.*" Condition="'$(NET_11_0_UP)' == true" />
 
     <!--microsoft asp.net core-->
     <PackageReference Update="Microsoft.Extensions.ApiDescription.Server" Version="$(AspNetFrameworkVersion)" />
@@ -266,7 +303,8 @@
     <PackageReference Update="Microsoft.VisualStudio.Web.CodeGenerators.Mvc" Version="$(AspNetFrameworkVersion)" />
 
     <!--microsoft entity framework and data-->
-    <PackageReference Update="Microsoft.Data.SqlClient" Version="5.*" />
+    <PackageReference Update="Microsoft.Data.SqlClient" Version="7.*" />
+    <PackageReference Update="Microsoft.Data.SqlClient" Version="5.*" Condition="'$(NET_7_0_LESS_OR_STD)' == true" />
     <PackageReference Update="Microsoft.EntityFrameworkCore" Version="$(EFCoreFrameworkVersion)" />
     <PackageReference Update="Microsoft.EntityFrameworkCore.Abstractions" Version="$(EFCoreFrameworkVersion)" />
     <PackageReference Update="Microsoft.EntityFrameworkCore.Cosmos" Version="$(EFCoreFrameworkVersion)" />
@@ -280,15 +318,20 @@
 
     <!-- EFCore.PG and Npgsql must same version https://github.com/npgsql/efcore.pg/issues/3011 -->
     <PackageReference Update="Npgsql" Version="$(NpgsqlVersion)" />
-    <PackageReference Update="Npgsql.EntityFrameworkCore.PostgreSQL" Version="$(EFCoreFrameworkVersion)" />
+    <PackageReference Update="Npgsql.EntityFrameworkCore.PostgreSQL" Version="$(NpgsqlEFCoreFrameworkVersion)" />
     <PackageReference Update="EFCore.NamingConventions" Version="$(EFCoreFrameworkVersion)" />
+    <PackageReference Update="Tec.EFCore.NamingConventions" Version="11.*-*" />
 
     <!--identityserver4 -->
-    <PackageReference Update="IdentityModel" Version="6.*" />
+    <!--<PackageReference Update="IdentityModel" Version="7.*" Condition="'$(NET_7_0_LESS_OR_STD)' == true" />-->
+    <PackageReference Update="IdentityModel" Version="7.*" Condition="'$(NET_6_0_UP)' == true" />
+    <PackageReference Update="IdentityModel" Version="5.*" Condition="'$(NET_5_0_LESS_OR_STD)' == true" />
+    <!-- Duende.IdentityModel@7.0.0 reference to System.Text.Json@8.0.5 -->
+    <PackageReference Update="Duende.IdentityModel" Version="8.*" Condition="'$(NET_8_0_UP)' == true" />
     <PackageReference Update="IdentityModel.AspNetCore.OAuth2Introspection" Version="6.*" />
 
     <!--azure-->
-    <PackageReference Update="Azure.Communication.Email" Version="1.*" />
+    <PackageReference Update="Azure.Communication.Email" Version="1.*-*" />
     <PackageReference Update="Azure.Containers.ContainerRegistry" Version="1.*-*" />
     <PackageReference Update="Azure.Core" Version="1.*" />
     <PackageReference Update="Azure.Core.Amqp" Version="1.*" />
@@ -317,43 +360,43 @@
     <!--microsoft identity-->
     <PackageReference Update="Microsoft.Graph" Version="5.*" />
     <PackageReference Update="Microsoft.Graph.Core" Version="3.*" />
-    <PackageReference Update="Microsoft.Identity.Abstractions" Version="5.*" />
+    <PackageReference Update="Microsoft.Identity.Abstractions" Version="9.*" />
     <PackageReference Update="Microsoft.Identity.Client" Version="4.*" />
     <PackageReference Update="Microsoft.Identity.Client.Extensions.Msal" Version="4.*" />
-    <PackageReference Update="Microsoft.Identity.Web" Version="2.*" />
-    <PackageReference Update="Microsoft.Identity.Web.Certificate" Version="2.*" />
-    <PackageReference Update="Microsoft.Identity.Web.Certificateless" Version="2.*" />
-    <PackageReference Update="Microsoft.Identity.Web.Diagnostics" Version="2.*" />
-    <PackageReference Update="Microsoft.Identity.Web.DownstreamApi" Version="2.*" />
-    <PackageReference Update="Microsoft.Identity.Web.TokenAcquisition" Version="2.*" />
-    <PackageReference Update="Microsoft.Identity.Web.TokenCache" Version="2.*" />
-    <PackageReference Update="Microsoft.Identity.Web.MicrosoftGraph" Version="2.*" />
-    <PackageReference Update="Microsoft.IdentityModel.Abstractions" Version="7.*" />
-    <PackageReference Update="Microsoft.IdentityModel.JsonWebTokens" Version="7.*" />
-    <PackageReference Update="Microsoft.IdentityModel.Logging" Version="7.*" />
-    <PackageReference Update="Microsoft.IdentityModel.LoggingExtensions" Version="7.*" />
-    <PackageReference Update="Microsoft.IdentityModel.Protocols" Version="7.*" />
-    <PackageReference Update="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="7.*" />
-    <PackageReference Update="Microsoft.IdentityModel.Tokens" Version="7.*" />
-    <PackageReference Update="Microsoft.IdentityModel.Validators" Version="7.*" />
+    <PackageReference Update="Microsoft.Identity.Web" Version="3.*" />
+    <PackageReference Update="Microsoft.Identity.Web.Certificate" Version="3.*" />
+    <PackageReference Update="Microsoft.Identity.Web.Certificateless" Version="3.*" />
+    <PackageReference Update="Microsoft.Identity.Web.Diagnostics" Version="3.*" />
+    <PackageReference Update="Microsoft.Identity.Web.DownstreamApi" Version="3.*" />
+    <PackageReference Update="Microsoft.Identity.Web.TokenAcquisition" Version="3.*" />
+    <PackageReference Update="Microsoft.Identity.Web.TokenCache" Version="3.*" />
+    <PackageReference Update="Microsoft.Identity.Web.MicrosoftGraph" Version="3.*" />
+    <PackageReference Update="Microsoft.IdentityModel.Abstractions" Version="$(MicrosoftIdentityModelVersion)" />
+    <PackageReference Update="Microsoft.IdentityModel.JsonWebTokens" Version="$(MicrosoftIdentityModelVersion)" />
+    <PackageReference Update="Microsoft.IdentityModel.Logging" Version="$(MicrosoftIdentityModelVersion)" />
+    <PackageReference Update="Microsoft.IdentityModel.LoggingExtensions" Version="$(MicrosoftIdentityModelVersion)" />
+    <PackageReference Update="Microsoft.IdentityModel.Protocols" Version="$(MicrosoftIdentityModelVersion)" />
+    <PackageReference Update="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="$(MicrosoftIdentityModelVersion)" />
+    <PackageReference Update="Microsoft.IdentityModel.Tokens" Version="$(MicrosoftIdentityModelVersion)" />
+    <PackageReference Update="Microsoft.IdentityModel.Validators" Version="$(MicrosoftIdentityModelVersion)" />
     <PackageReference Update="Microsoft.Kiota.Abstractions" Version="1.*" />
     <PackageReference Update="Microsoft.Kiota.Authentication.Azure" Version="1.*" />
     <PackageReference Update="Microsoft.Kiota.Http.HttpClientLibrary" Version="1.*" />
     <PackageReference Update="Microsoft.Kiota.Serialization.Form" Version="1.*" />
     <PackageReference Update="Microsoft.Kiota.Serialization.Json" Version="1.*" />
     <PackageReference Update="Microsoft.Kiota.Serialization.Text" Version="1.*" />
-    <PackageReference Update="System.IdentityModel.Tokens.Jwt" Version="7.*" />
+    <PackageReference Update="System.IdentityModel.Tokens.Jwt" Version="$(MicrosoftIdentityModelVersion)" />
 
     <!--nuget-->
-    <PackageReference Update="NuGet.Common" Version="6.*" />
-    <PackageReference Update="NuGet.Configuration" Version="6.*" />
-    <PackageReference Update="NuGet.DependencyResolver.Core" Version="6.*" />
-    <PackageReference Update="NuGet.Frameworks" Version="6.*" />
-    <PackageReference Update="NuGet.LibraryModel" Version="6.*" />
-    <PackageReference Update="NuGet.Packaging" Version="6.*" />
-    <PackageReference Update="NuGet.ProjectModel" Version="6.*" />
-    <PackageReference Update="NuGet.Protocol" Version="6.*" />
-    <PackageReference Update="NuGet.Versioning" Version="6.*" />
+    <PackageReference Update="NuGet.Common" Version="$(NuGetPackageVersion)" />
+    <PackageReference Update="NuGet.Configuration" Version="$(NuGetPackageVersion)" />
+    <PackageReference Update="NuGet.DependencyResolver.Core" Version="$(NuGetPackageVersion)" />
+    <PackageReference Update="NuGet.Frameworks" Version="$(NuGetPackageVersion)" />
+    <PackageReference Update="NuGet.LibraryModel" Version="$(NuGetPackageVersion)" />
+    <PackageReference Update="NuGet.Packaging" Version="$(NuGetPackageVersion)" />
+    <PackageReference Update="NuGet.ProjectModel" Version="$(NuGetPackageVersion)" />
+    <PackageReference Update="NuGet.Protocol" Version="$(NuGetPackageVersion)" />
+    <PackageReference Update="NuGet.Versioning" Version="$(NuGetPackageVersion)" />
 
     <!--grpc-->
     <PackageReference Update="Google.Protobuf" Version="3.21.*" />
@@ -394,20 +437,104 @@
 
   </ItemGroup>
 
-  <ItemGroup Condition="'$(NET_5_0_LESS_OR_STD)' == true">
-    <PackageReference Update="Serilog" Version="3.0.*" />
-    <PackageReference Update="Serilog.AspNetCore" Version="7.*" />
-    <PackageReference Update="Serilog.Extensions.Hosting" Version="7.*" />
-    <PackageReference Update="Serilog.Extensions.Logging" Version="7.*" />
-    <PackageReference Update="Serilog.Formatting.Compact" Version="1.*" />
-    <PackageReference Update="Serilog.Settings.Configuration" Version="7.*" />
-    <PackageReference Update="Serilog.Sinks.Console" Version="4.*" />
-    <PackageReference Update="Serilog.Sinks.Seq" Version="5.*" />
-
-    <PackageReference Update="xunit.runner.visualstudio" Version="2.4.*" PrivateAssets="All" />
+  <ItemGroup Condition="'$(NET_7_0_LESS)' == true">
+    <PackageReference Update="Azure.Extensions.AspNetCore.DataProtection.Blobs" Version="1.5.1" />
+    <PackageReference Update="Azure.Extensions.AspNetCore.DataProtection.Keys" Version="1.6.1" />
+    <PackageReference Update="Azure.Security.KeyVault.Certificates" Version="4.8.0" />
+    <PackageReference Update="Azure.Security.KeyVault.Keys" Version="4.8.0" />
+    <PackageReference Update="Azure.Security.KeyVault.Secrets" Version="4.8.0" />
+    <PackageReference Update="Azure.Storage.Blobs" Version="12.26.0" />
+    <PackageReference Update="Azure.Storage.Common" Version="12.25.0" />
+    <PackageReference Update="Microsoft.CodeAnalysis" Version="4.13.*" />
+    <PackageReference Update="Microsoft.CodeAnalysis.AnalyzerUtilities" Version="3.*" />
+    <PackageReference Update="Microsoft.CodeAnalysis.CSharp" Version="4.13.*" />
+    <PackageReference Update="Microsoft.CodeAnalysis.CSharp.Features" Version="4.13.*" />
+    <PackageReference Update="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.13.*" />
+    <PackageReference Update="Microsoft.CodeAnalysis.Features" Version="4.13.*" />
+    <PackageReference Update="Microsoft.CodeAnalysis.Scripting" Version="4.13.*" />
+    <PackageReference Update="Microsoft.CodeAnalysis.VisualBasic" Version="4.13.*" />
+    <PackageReference Update="Microsoft.CodeAnalysis.VisualBasic.Workspaces" Version="4.13.*" />
+    <PackageReference Update="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.13.*" />
+    <PackageReference Update="Microsoft.NET.Test.Sdk" Version="17.13.*" />
+    <PackageReference Update="Microsoft.VisualStudio.Threading" Version="17.13.*" />
+    <PackageReference Update="System.ClientModel" Version="1.8.*" />
   </ItemGroup>
 
-  <Import Project="$(MSBuildThisFileDirectory)Directory.Build.override.targets" Condition="Exists('$(MSBuildThisFileDirectory)Directory.Build.override.targets')" />
+  <ItemGroup Condition="'$(NET_6_0_UP)' == true">
+    <PackageReference Update="Serilog" Version="4.*" />
+    <PackageReference Update="Serilog.AspNetCore" Version="$(SerilogVersion)" />
+    <PackageReference Update="Serilog.Enrichers.CorrelationId" Version="3.*" />
+    <PackageReference Update="Serilog.Enrichers.Environment" Version="3.*" />
+    <PackageReference Update="Serilog.Enrichers.Thread" Version="4.*" />
+    <PackageReference Update="Serilog.Extensions.Hosting" Version="$(SerilogVersion)" />
+    <PackageReference Update="Serilog.Extensions.Logging" Version="$(SerilogVersion)" />
+    <PackageReference Update="Serilog.Formatting.Compact" Version="3.*" />
+    <PackageReference Update="Serilog.Settings.Configuration" Version="$(SerilogVersion)" />
+    <PackageReference Update="Serilog.Sinks.Console" Version="6.*" />
+    <PackageReference Update="Serilog.Sinks.Debug" Version="3.*" />
+    <PackageReference Update="Serilog.Sinks.File" Version="7.*" />
+    <PackageReference Update="Serilog.Sinks.PeriodicBatching" Version="5.*" />
+    <PackageReference Update="Serilog.Sinks.Seq" Version="9.*" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(NET_3_1_LESS_OR_STD)' == true">
+    <PackageReference Update="Serilog" Version="3.0.*" />
+    <PackageReference Update="Serilog.AspNetCore" Version="6.*" />
+    <PackageReference Update="Serilog.Enrichers.CorrelationId" Version="3.*" />
+    <PackageReference Update="Serilog.Enrichers.Environment" Version="2.*" />
+    <PackageReference Update="Serilog.Enrichers.Thread" Version="3.*" />
+    <PackageReference Update="Serilog.Extensions.Hosting" Version="5.*" />
+    <PackageReference Update="Serilog.Extensions.Logging" Version="3.*" />
+    <PackageReference Update="Serilog.Formatting.Compact" Version="1.*" />
+    <PackageReference Update="Serilog.Settings.Configuration" Version="3.*" />
+    <PackageReference Update="Serilog.Sinks.Console" Version="4.*" />
+    <PackageReference Update="Serilog.Sinks.Debug" Version="2.*" />
+    <PackageReference Update="Serilog.Sinks.File" Version="5.*" />
+    <PackageReference Update="Serilog.Sinks.PeriodicBatching" Version="3.*" />
+    <PackageReference Update="Serilog.Sinks.Seq" Version="5.*" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(NET_5_0)' == true">
+    <PackageReference Update="Serilog" Version="3.0.*" />
+    <PackageReference Update="Serilog.AspNetCore" Version="6.*" />
+    <PackageReference Update="Serilog.Enrichers.CorrelationId" Version="3.*" />
+    <PackageReference Update="Serilog.Enrichers.Environment" Version="2.*" />
+    <PackageReference Update="Serilog.Enrichers.Thread" Version="3.*" />
+    <PackageReference Update="Serilog.Extensions.Hosting" Version="5.*" />
+    <PackageReference Update="Serilog.Extensions.Logging" Version="3.*" />
+    <PackageReference Update="Serilog.Formatting.Compact" Version="1.*" />
+    <PackageReference Update="Serilog.Settings.Configuration" Version="3.*" />
+    <PackageReference Update="Serilog.Sinks.Console" Version="4.*" />
+    <PackageReference Update="Serilog.Sinks.Debug" Version="2.*" />
+    <PackageReference Update="Serilog.Sinks.File" Version="5.*" />
+    <PackageReference Update="Serilog.Sinks.PeriodicBatching" Version="3.*" />
+    <PackageReference Update="Serilog.Sinks.Seq" Version="5.*" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(NET_7_0_LESS_OR_STD)' == true">
+    <PackageReference Update="Azure.Core" Version="1.50.*" />
+    <PackageReference Update="Azure.Identity" Version="1.17.*" />
+    <PackageReference Update="Microsoft.Graph" Version="5.73.*" />
+    <PackageReference Update="Microsoft.Graph.Core" Version="3.2.3" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(NET_5_0_LESS_OR_STD)' == true">
+    <PackageReference Update="xunit.runner.visualstudio" Version="2.4.*" PrivateAssets="All" />
+    <PackageReference Update="Azure.Core" Version="1.45.*" />
+    <!--Azure.Identity@1.13.2 reference to Microsoft.Identity.Client@4.67.* -->
+    <PackageReference Update="Azure.Identity" Version="1.13.1" />
+    <PackageReference Update="Microsoft.Graph" Version="4.11.*" />
+    <PackageReference Update="Microsoft.Graph.Core" Version="2.0.5" />
+    <PackageReference Update="Microsoft.Identity.Client" Version="4.66.*"/>
+    <PackageReference Update="Microsoft.Identity.Client.Extensions.Msal" Version="4.66.*"/>
+    <PackageReference Update="System.ClientModel" Version="1.3.*" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(NET_5_0_LESS)' == true">
+    <PackageReference Update="AutoMapper" Version="12.*" />
+  </ItemGroup>
+
+  <Import Project="$(MSBuildThisFileDirectory)Directory.Build.override.targets" Condition="'$(PackageLibraryTargetFlag)' != true And Exists('$(MSBuildThisFileDirectory)Directory.Build.override.targets')" />
 
   <Target Name="SetAssemblyVersion" AfterTargets="MinVer">
     <PropertyGroup>

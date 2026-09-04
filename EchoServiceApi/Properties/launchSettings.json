@@ -11,7 +11,6 @@
         "ASPNETCORE_ENVIRONMENT": "Development",
         "APPLICATIONINSIGHTS_CONNECTION_STRING_1": "InstrumentationKey=5e68c870-~;IngestionEndpoint=https://southeastasia-1.in.applicationinsights.azure.com/;LiveEndpoint=https://southeastasia.livediagnostics.monitor.azure.com/"
       },
-      "dotnetRunMessages": "true",
       "applicationUrl": "https://localhost:5001;http://localhost:5000"
     },
     "IIS Express": {

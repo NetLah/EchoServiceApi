@@ -1,9 +1,11 @@
 ﻿using EchoServiceApi;
+using EchoServiceApi.Controllers;
 using EchoServiceApi.Verifiers;
 using Microsoft.Extensions.Hosting.WindowsServices;
 using NetLah.Diagnostics;
 using NetLah.Extensions.HttpOverrides;
 using NetLah.Extensions.Logging;
+using System.Text;
 
 AppLog.InitLogger();
 AppLog.Logger.LogInformation("Application configure...");
@@ -41,12 +43,17 @@ try
 
     builder.Services.AddApplicationInsightsTelemetry();
 
+    builder.AddHttpOverrides();
+
     builder.Services.AddControllers();
 
-    builder.Services.AddHealthChecks();     // Registers health checks services
+    //builder.Services.AddHealthChecks();     // Registers health checks services
+
+    var appOptions = builder.Configuration.Get<AppOptions>()!;
 
     builder.Services.AddSingleton<TokenCredentialFactory>();
 
+    builder.Services.AddSingleton<AppOptions>(appOptions);
     builder.Services.AddScoped<CosmosCacheVerifier>();
     builder.Services.AddScoped<CosmosVerifier>();
     builder.Services.AddScoped<PosgreSqlVerifier>();
@@ -63,8 +70,6 @@ try
     builder.Services.AddScoped<HttpContextInfo>();
 
     builder.Services.AddScoped<DiagnosticInfo>();
-
-    builder.Services.AddHttpOverrides(builder.Configuration);
 
     var app = builder.Build();
 
@@ -89,13 +94,61 @@ try
     ///    opt.GetLevel = (HttpContext c, double d, Exception? e) => (c.Response.StatusCode < 500 && e == null) ? LogEventLevel.Information : LogEventLevel.Error;
     ///});
 
-    app.UseHealthChecks("/healthz");
+    // app.UseHealthChecks("/healthz");
 
     // app.UseHttpsRedirection()
 
     app.UseStatusCodePages();
 
     app.UseStaticFiles();
+
+    app.UseRouting();
+
+    var debugRoutes = "debugRoutes";
+
+    if (!string.IsNullOrWhiteSpace(debugRoutes))
+    {
+        var debugRoutesPath = $"/diag/{debugRoutes}";
+        logger.LogDebug("Debug routes: {debugRoutesPath}", debugRoutes);
+
+        app.MapGet(debugRoutesPath, (IEnumerable<EndpointDataSource> endpointSources) =>
+        {
+            var sb = new StringBuilder();
+            var endpoints = endpointSources.SelectMany(es => es.Endpoints);
+            foreach (var endpoint in endpoints)
+            {
+                var routeNameMetadata = endpoint.Metadata.OfType<RouteNameMetadata>().FirstOrDefault();
+                var httpMethodsMetadata = endpoint.Metadata.OfType<HttpMethodMetadata>().FirstOrDefault();
+
+                sb.Append($"[{routeNameMetadata?.RouteName}] {(httpMethodsMetadata == null ? null : string.Join(",", httpMethodsMetadata.HttpMethods))}");
+                if (endpoint is RouteEndpoint routeEndpoint)
+                {
+                    sb.AppendLine($" {routeEndpoint.RoutePattern.RawText} {routeEndpoint.DisplayName}");
+                }
+            }
+            return sb.ToString();
+        });
+    }
+
+    var defaultPath = appOptions.DefaultPath;
+    if (defaultPath != null)
+    {
+        logger.LogDebug("Map Default/Home to {route}", defaultPath);
+        app.MapControllerRoute(name: string.Empty,
+            pattern: defaultPath,
+            defaults: new { controller = "Default", action = nameof(DefaultController.Home) })
+            .WithMetadata(new HttpMethodMetadata(new[] { "GET" }));
+    }
+
+    var namePath = appOptions.NamePath;
+    if (namePath != null && !string.Equals(namePath, defaultPath, StringComparison.InvariantCultureIgnoreCase))
+    {
+        logger.LogDebug("Map Default/Name to {route}", namePath);
+        app.MapControllerRoute(name: string.Empty,
+            pattern: namePath,
+            defaults: new { controller = "Default", action = nameof(DefaultController.Name) })
+            .WithMetadata(new HttpMethodMetadata(new[] { "GET" }));
+    }
 
     app.UseAuthorization();
 

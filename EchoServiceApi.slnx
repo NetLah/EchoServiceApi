@@ -1,0 +1,17 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".azure/pipelines/azure-pipelines.yml" />
+    <File Path=".docker-linux/Dockerfile" />
+    <File Path=".docker-windows/Dockerfile" />
+    <File Path=".editorconfig" />
+    <File Path=".github/workflows/aspnet-core.yml" />
+    <File Path="DevNotes.md" />
+    <File Path="Directory.Build.initial.targets" />
+    <File Path="Directory.Build.override.targets" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
+    <File Path="docker-build.ps1" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="EchoServiceApi/EchoServiceApi.csproj" />
+</Solution>
