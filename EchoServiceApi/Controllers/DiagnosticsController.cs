@@ -40,6 +40,9 @@ namespace EchoServiceApi.Controllers
             }
         }
 
+        public IActionResult Name([FromServices] AppOptions appOptions, [FromServices] IConfiguration configuration)
+            => Content(appOptions.DiagName ?? configuration?["DIAGNAME"] ?? configuration?["SAMPLE_NAME"] ?? configuration?["SAMPLENAME"] ?? "Noname", "text/plain; charset=utf-8");
+
         // Add multi connections query
         public IActionResult Connection1([FromServices] HttpContextInfo httpContextInfo)
         {

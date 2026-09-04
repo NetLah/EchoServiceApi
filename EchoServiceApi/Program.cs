@@ -41,12 +41,17 @@ try
 
     builder.Services.AddApplicationInsightsTelemetry();
 
+    builder.AddHttpOverrides();
+
     builder.Services.AddControllers();
 
-    builder.Services.AddHealthChecks();     // Registers health checks services
+    //builder.Services.AddHealthChecks();     // Registers health checks services
+
+    var appOptions = builder.Configuration.Get<AppOptions>()!;
 
     builder.Services.AddSingleton<TokenCredentialFactory>();
 
+    builder.Services.AddSingleton<AppOptions>(appOptions);
     builder.Services.AddScoped<CosmosCacheVerifier>();
     builder.Services.AddScoped<CosmosVerifier>();
     builder.Services.AddScoped<PosgreSqlVerifier>();
@@ -63,8 +68,6 @@ try
     builder.Services.AddScoped<HttpContextInfo>();
 
     builder.Services.AddScoped<DiagnosticInfo>();
-
-    builder.Services.AddHttpOverrides(builder.Configuration);
 
     var app = builder.Build();
 
@@ -89,7 +92,7 @@ try
     ///    opt.GetLevel = (HttpContext c, double d, Exception? e) => (c.Response.StatusCode < 500 && e == null) ? LogEventLevel.Information : LogEventLevel.Error;
     ///});
 
-    app.UseHealthChecks("/healthz");
+    // app.UseHealthChecks("/healthz");
 
     // app.UseHttpsRedirection()
 
